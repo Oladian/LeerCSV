@@ -13,7 +13,6 @@ import com.opencsv.CSVReaderBuilder;
 
 
 public class ReadCSV {
-	private static final String CSV_FILE_PATH = "ficherosCSV/MOCK_DATA.csv";
 	private static List<CochesDTO> carList = new ArrayList<>();
 	
 	public List<CochesDTO> getCarListFromCSV(String csvFilePath) {

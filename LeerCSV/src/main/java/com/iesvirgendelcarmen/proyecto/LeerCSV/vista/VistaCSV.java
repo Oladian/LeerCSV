@@ -27,8 +27,10 @@ public class VistaCSV {
 	private JTextField textFieldOrigen;
 	private JTextField textFieldModelo;
 	private JTextField textFieldColor;
-	private JTextField textCoche;
+	private JTextField textMarca;
 	private JTextField textMatricula;
+	private JMenuItem mntmCargarDatos;
+	private JMenuItem mntmSalir;
 
 	public VistaCSV() {
 		initialize();
@@ -46,10 +48,10 @@ public class VistaCSV {
 		JMenu mnArchivo = new JMenu("Archivo");
 		menuBar.add(mnArchivo);
 		
-		JMenuItem mntmCargarDatos = new JMenuItem("Cargar datos");
+		mntmCargarDatos = new JMenuItem("Cargar datos");
 		mnArchivo.add(mntmCargarDatos);
 		
-		JMenuItem mntmSalir = new JMenuItem("Salir");
+		mntmSalir = new JMenuItem("Salir");
 		mnArchivo.add(mntmSalir);
 		
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
@@ -69,12 +71,12 @@ public class VistaCSV {
 		panelDerecho.add(textMatricula);
 		textMatricula.setColumns(10);
 		
-		JLabel lblCoche = new JLabel("Coche");
-		panelDerecho.add(lblCoche);
+		JLabel lblMarca = new JLabel("Marca");
+		panelDerecho.add(lblMarca);
 		
-		textCoche = new JTextField();
-		panelDerecho.add(textCoche);
-		textCoche.setColumns(10);
+		textMarca = new JTextField();
+		panelDerecho.add(textMarca);
+		textMarca.setColumns(10);
 		
 		JLabel lblColor = new JLabel("Color");
 		panelDerecho.add(lblColor);
@@ -176,4 +178,100 @@ public class VistaCSV {
 		panelBotonesTablas.add(btnActualizarDatos);
 	}
 
+	public JFrame getFrame() {
+		return frame;
+	}
+
+	public void setFrame(JFrame frame) {
+		this.frame = frame;
+	}
+
+	public JButton getButtonMenorMenor() {
+		return buttonMenorMenor;
+	}
+
+	public void setButtonMenorMenor(JButton buttonMenorMenor) {
+		this.buttonMenorMenor = buttonMenorMenor;
+	}
+
+	public JButton getButtonMenor() {
+		return buttonMenor;
+	}
+
+	public void setButtonMenor(JButton buttonMenor) {
+		this.buttonMenor = buttonMenor;
+	}
+
+	public JButton getButtonMayor() {
+		return buttonMayor;
+	}
+
+	public void setButtonMayor(JButton buttonMayor) {
+		this.buttonMayor = buttonMayor;
+	}
+
+	public JButton getButtonMayorMayor() {
+		return buttonMayorMayor;
+	}
+
+	public void setButtonMayorMayor(JButton buttonMayorMayor) {
+		this.buttonMayorMayor = buttonMayorMayor;
+	}
+
+	public JTextField getTextFieldOrigen() {
+		return textFieldOrigen;
+	}
+
+	public void setTextFieldOrigen(JTextField textFieldOrigen) {
+		this.textFieldOrigen = textFieldOrigen;
+	}
+
+	public JTextField getTextFieldModelo() {
+		return textFieldModelo;
+	}
+
+	public void setTextFieldModelo(JTextField textFieldModelo) {
+		this.textFieldModelo = textFieldModelo;
+	}
+
+	public JTextField getTextFieldColor() {
+		return textFieldColor;
+	}
+
+	public void setTextFieldColor(JTextField textFieldColor) {
+		this.textFieldColor = textFieldColor;
+	}
+
+	public JTextField getTextMarca() {
+		return textMarca;
+	}
+
+	public void setTextMarca(JTextField textMarca) {
+		this.textMarca = textMarca;
+	}
+
+	public JTextField getTextMatricula() {
+		return textMatricula;
+	}
+
+	public void setTextMatricula(JTextField textMatricula) {
+		this.textMatricula = textMatricula;
+	}
+
+	public JMenuItem getMntmCargarDatos() {
+		return mntmCargarDatos;
+	}
+
+	public void setMntmCargarDatos(JMenuItem mntmCargarDatos) {
+		this.mntmCargarDatos = mntmCargarDatos;
+	}
+
+	public JMenuItem getMntmSalir() {
+		return mntmSalir;
+	}
+
+	public void setMntmSalir(JMenuItem mntmSalir) {
+		this.mntmSalir = mntmSalir;
+	}
+	
 }

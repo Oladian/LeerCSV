@@ -18,7 +18,7 @@ public class CochesDAOImp implements CochesDAO {
 		try(PreparedStatement statement = conexion.prepareStatement(sql);
 				ResultSet result = statement.executeQuery();) {
 			while(result.next()) {
-				listaDeCoches.add(new CochesDTO(result.getString(0), result.getString(1), result.getString(2), result.getString(3), result.getString(4)));
+				listaDeCoches.add(new CochesDTO(result.getString(1), result.getString(2), result.getString(3), result.getString(4), result.getString(5)));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
