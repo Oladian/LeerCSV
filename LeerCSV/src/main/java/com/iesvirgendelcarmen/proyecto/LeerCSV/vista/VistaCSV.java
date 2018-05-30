@@ -31,7 +31,18 @@ public class VistaCSV {
 	private JTextField textMatricula;
 	private JMenuItem mntmCargarDatos;
 	private JMenuItem mntmSalir;
+	private JButton btnAnadirDatos;
+	private JButton btnBorrarDatos;
+	private JButton btnActualizarDatos;
+	private JTable table;
+	private JScrollPane scrollPaneTablas;
 
+	private JTextField textAnadirMatricula = new JTextField();
+	private JTextField textAnadirMarca = new JTextField();
+	private JTextField textAnadirColor = new JTextField();
+	private JTextField textAnadirModelo = new JTextField();
+	private JTextField textAnadirOrigen = new JTextField();
+	
 	public VistaCSV() {
 		initialize();
 		frame.setVisible(true);
@@ -68,6 +79,7 @@ public class VistaCSV {
 		panelDerecho.add(lblMatricula);
 		
 		textMatricula = new JTextField();
+		textMatricula.setEditable(false);
 		panelDerecho.add(textMatricula);
 		textMatricula.setColumns(10);
 		
@@ -75,6 +87,7 @@ public class VistaCSV {
 		panelDerecho.add(lblMarca);
 		
 		textMarca = new JTextField();
+		textMarca.setEditable(false);
 		panelDerecho.add(textMarca);
 		textMarca.setColumns(10);
 		
@@ -82,6 +95,7 @@ public class VistaCSV {
 		panelDerecho.add(lblColor);
 		
 		textFieldColor = new JTextField();
+		textFieldColor.setEditable(false);
 		panelDerecho.add(textFieldColor);
 		textFieldColor.setColumns(10);
 		
@@ -89,6 +103,7 @@ public class VistaCSV {
 		panelDerecho.add(lblModelo);
 		
 		textFieldModelo = new JTextField();
+		textFieldModelo.setEditable(false);
 		panelDerecho.add(textFieldModelo);
 		textFieldModelo.setColumns(10);
 		
@@ -96,6 +111,7 @@ public class VistaCSV {
 		panelDerecho.add(lblOrigen);
 		
 		textFieldOrigen = new JTextField();
+		textFieldOrigen.setEditable(false);
 		panelDerecho.add(textFieldOrigen);
 		textFieldOrigen.setColumns(10);
 		
@@ -121,61 +137,36 @@ public class VistaCSV {
 		tabbedPane.addTab("Tablas", null, panelTablas, null);
 		panelTablas.setLayout(new BorderLayout(0, 0));
 		
-		JScrollPane scrollPaneTablas = new JScrollPane();
+		scrollPaneTablas = new JScrollPane();
+		scrollPaneTablas.setEnabled(false);
 		panelTablas.add(scrollPaneTablas,BorderLayout.NORTH);
 		
-		String[] columnNames = {"First Name", "Last Name", "Sport", "# of Years", "Vegetarian"};
-		Object[][] data = {
-		    {"Kathy", "Smith", "Snowboarding", new Integer(5), new Boolean(false)},
-		    {"John", "Doe", "Rowing", new Integer(3), new Boolean(true)},
-		    {"Sue", "Black", "Knitting", new Integer(2), new Boolean(false)},
-		    {"Jane", "White", "Speed reading", new Integer(20), new Boolean(true)},
-		    {"Joe", "Brown", "Pool", new Integer(10), new Boolean(false)},
-		    {"Kathy", "Smith", "Snowboarding", new Integer(5), new Boolean(false)},
-		    {"John", "Doe", "Rowing", new Integer(3), new Boolean(true)},
-		    {"Sue", "Black", "Knitting", new Integer(2), new Boolean(false)},
-		    {"Jane", "White", "Speed reading", new Integer(20), new Boolean(true)},
-		    {"Kathy", "Smith", "Snowboarding", new Integer(5), new Boolean(false)},
-		    {"John", "Doe", "Rowing", new Integer(3), new Boolean(true)},
-		    {"Sue", "Black", "Knitting", new Integer(2), new Boolean(false)},
-		    {"Jane", "White", "Speed reading", new Integer(20), new Boolean(true)},
-		    {"Kathy", "Smith", "Snowboarding", new Integer(5), new Boolean(false)},
-		    {"John", "Doe", "Rowing", new Integer(3), new Boolean(true)},
-		    {"Sue", "Black", "Knitting", new Integer(2), new Boolean(false)},
-		    {"Jane", "White", "Speed reading", new Integer(20), new Boolean(true)},
-		    {"Kathy", "Smith", "Snowboarding", new Integer(5), new Boolean(false)},
-		    {"John", "Doe", "Rowing", new Integer(3), new Boolean(true)},
-		    {"Sue", "Black", "Knitting", new Integer(2), new Boolean(false)},
-		    {"Jane", "White", "Speed reading", new Integer(20), new Boolean(true)},
-		    {"Kathy", "Smith", "Snowboarding", new Integer(5), new Boolean(false)},
-		    {"John", "Doe", "Rowing", new Integer(3), new Boolean(true)},
-		    {"Sue", "Black", "Knitting", new Integer(2), new Boolean(false)},
-		    {"Jane", "White", "Speed reading", new Integer(20), new Boolean(true)},
-		    {"Kathy", "Smith", "Snowboarding", new Integer(5), new Boolean(false)},
-		    {"John", "Doe", "Rowing", new Integer(3), new Boolean(true)},
-		    {"Sue", "Black", "Knitting", new Integer(2), new Boolean(false)},
-		    {"Jane", "White", "Speed reading", new Integer(20), new Boolean(true)},
-		    {"Kathy", "Smith", "Snowboarding", new Integer(5), new Boolean(false)},
-		    {"John", "Doe", "Rowing", new Integer(3), new Boolean(true)},
-		    {"Sue", "Black", "Knitting", new Integer(2), new Boolean(false)},
-		    {"Jane", "White", "Speed reading", new Integer(20), new Boolean(true)}
-		};
+		table = new JTable();
 		
-		JTable table = new JTable(data,columnNames);
-		scrollPaneTablas.setViewportView(table);
-
 		JPanel panelBotonesTablas = new JPanel();
 		panelTablas.add(panelBotonesTablas);
 		panelBotonesTablas.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		
-		JButton btnAadirDatos = new JButton("Añadir datos");
-		panelBotonesTablas.add(btnAadirDatos);
+		btnAnadirDatos = new JButton("Anadir datos");
+		panelBotonesTablas.add(btnAnadirDatos);
 		
-		JButton btnBorrarDatos = new JButton("Borrar datos");
+		btnBorrarDatos = new JButton("Borrar datos");
 		panelBotonesTablas.add(btnBorrarDatos);
 		
-		JButton btnActualizarDatos = new JButton("Actualizar datos");
+		btnActualizarDatos = new JButton("Actualizar datos");
 		panelBotonesTablas.add(btnActualizarDatos);
+		
+		
+		buttonMayor.setEnabled(false);
+		buttonMayorMayor.setEnabled(false);
+		buttonMenor.setEnabled(false);
+		buttonMenorMenor.setEnabled(false);
+		btnAnadirDatos.setEnabled(false);
+		btnBorrarDatos.setEnabled(false);
+		btnActualizarDatos.setEnabled(false);
+		table.setEnabled(false);
+		
+		
 	}
 
 	public JFrame getFrame() {
@@ -272,6 +263,86 @@ public class VistaCSV {
 
 	public void setMntmSalir(JMenuItem mntmSalir) {
 		this.mntmSalir = mntmSalir;
+	}
+
+	public JButton getBtnAnadirDatos() {
+		return btnAnadirDatos;
+	}
+
+	public void setBtnAnadirDatos(JButton btnAnadirDatos) {
+		this.btnAnadirDatos = btnAnadirDatos;
+	}
+
+	public JButton getBtnBorrarDatos() {
+		return btnBorrarDatos;
+	}
+
+	public void setBtnBorrarDatos(JButton btnBorrarDatos) {
+		this.btnBorrarDatos = btnBorrarDatos;
+	}
+
+	public JButton getBtnActualizarDatos() {
+		return btnActualizarDatos;
+	}
+
+	public void setBtnActualizarDatos(JButton btnActualizarDatos) {
+		this.btnActualizarDatos = btnActualizarDatos;
+	}
+
+	public JTable getTable() {
+		return table;
+	}
+
+	public void setTable(JTable table) {
+		this.table = table;
+	}
+
+	public JScrollPane getScrollPaneTablas() {
+		return scrollPaneTablas;
+	}
+
+	public void setScrollPaneTablas(JScrollPane scrollPaneTablas) {
+		this.scrollPaneTablas = scrollPaneTablas;
+	}
+
+	public JTextField getTextAnadirMatricula() {
+		return textAnadirMatricula;
+	}
+
+	public void setTextAnadirMatricula(JTextField textAnadirMatricula) {
+		this.textAnadirMatricula = textAnadirMatricula;
+	}
+
+	public JTextField getTextAnadirMarca() {
+		return textAnadirMarca;
+	}
+
+	public void setTextAnadirMarca(JTextField textAnadirMarca) {
+		this.textAnadirMarca = textAnadirMarca;
+	}
+
+	public JTextField getTextAnadirColor() {
+		return textAnadirColor;
+	}
+
+	public void setTextAnadirColor(JTextField textAnadirColor) {
+		this.textAnadirColor = textAnadirColor;
+	}
+
+	public JTextField getTextAnadirModelo() {
+		return textAnadirModelo;
+	}
+
+	public void setTextAnadirModelo(JTextField textAnadirModelo) {
+		this.textAnadirModelo = textAnadirModelo;
+	}
+
+	public JTextField getTextAnadirOrigen() {
+		return textAnadirOrigen;
+	}
+
+	public void setTextAnadirOrigen(JTextField textAnadirOrigen) {
+		this.textAnadirOrigen = textAnadirOrigen;
 	}
 	
 }

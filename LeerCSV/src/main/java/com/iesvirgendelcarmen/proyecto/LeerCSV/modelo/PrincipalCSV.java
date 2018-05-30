@@ -1,7 +1,7 @@
 package com.iesvirgendelcarmen.proyecto.LeerCSV.modelo;
 
 import java.awt.EventQueue;
-import java.util.List;
+//import java.util.List;
 
 import com.iesvirgendelcarmen.proyecto.LeerCSV.controlador.ControladorCSV;
 import com.iesvirgendelcarmen.proyecto.LeerCSV.vista.VistaCSV;
@@ -9,12 +9,13 @@ import com.iesvirgendelcarmen.proyecto.LeerCSV.vista.VistaCSV;
 public class PrincipalCSV {
 	public static void main(String[] args) {
 		
-		CochesDAOImp implementacion = new CochesDAOImp();
-		ReadCSV readCsv = new ReadCSV();
-		List<CochesDTO> listaCoches = readCsv.getCarListFromCSV("ficherosCSV/MOCK_DATA.csv");
+		//CochesDAOImp implementacion = new CochesDAOImp();
+		//ReadCSV readCsv = new ReadCSV();
+		//List<CochesDTO> listaCoches = readCsv.getCarListFromCSV("ficherosCSV/MOCK_DATA.csv");
+		
 		//System.out.println(implementacion.insertarListaCoches(listaCoches));
-		implementacion.insertarListaCoches(listaCoches);
-		System.out.println(implementacion.listarCoches());
+		//implementacion.insertarListaCoches(listaCoches);
+		//System.out.println(implementacion.listarCoches());
 		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {

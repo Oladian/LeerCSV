@@ -35,14 +35,4 @@ public class ReadCSV {
 				}
 			return carList;
 	}
-/*
- 		public static void main(String[] args) {
-		ReadCSV reader = new ReadCSV();
-		List<CochesDTO> listaCoches = reader.getCarListFromCSV(CSV_FILE_PATH);
-		for (int i = 0; i < listaCoches.size(); i++) {
-			System.out.println(listaCoches.get(i).getCar());
-		}
-		System.out.println(listaCoches.get(0).getCar());
-	}
-*/	
 }
