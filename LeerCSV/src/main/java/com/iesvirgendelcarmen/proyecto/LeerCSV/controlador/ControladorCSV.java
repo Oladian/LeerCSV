@@ -2,6 +2,7 @@ package com.iesvirgendelcarmen.proyecto.LeerCSV.controlador;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -9,7 +10,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
 
 import com.iesvirgendelcarmen.proyecto.LeerCSV.modelo.CochesDAOImp;
 import com.iesvirgendelcarmen.proyecto.LeerCSV.modelo.CochesDTO;
@@ -18,6 +19,7 @@ import com.iesvirgendelcarmen.proyecto.LeerCSV.vista.VistaCSV;
 
 public class ControladorCSV implements ActionListener {
 	String path=".";
+	List<CochesDTO> listaCochesActualizados = new ArrayList<>();
 	ReadCSV reader = new ReadCSV();
 	CochesDAOImp manipular = new CochesDAOImp();
 	private List<CochesDTO> listaCoches;
@@ -27,7 +29,6 @@ public class ControladorCSV implements ActionListener {
 	public ControladorCSV(VistaCSV vista) {
 		this.vista = vista;
 		registerComponent();
-		
 	}
 	
 	public void actionPerformed(ActionEvent e) {
@@ -104,6 +105,7 @@ public class ControladorCSV implements ActionListener {
 		vista.getMntmSalir().addActionListener(this);
 	}
 	
+		// Formulario para CSV
 	private void colocarFormularioCoche(int i) {
 		if(listaCoches.size()>0) {
 			vista.getTextMatricula().setText(listaCoches.get(i).getMatricula());
@@ -114,32 +116,33 @@ public class ControladorCSV implements ActionListener {
 		}
 	}
 	
+		//Metodo que escoge el fichero
 	private void lanzarEleccionFichero() {
 		JFileChooser fileChooser = new JFileChooser("./ficherosCSV");
 		int resultado = fileChooser.showOpenDialog(vista.getFrame());
-		if(resultado==fileChooser.APPROVE_OPTION) {
+		if(resultado==JFileChooser.APPROVE_OPTION) {
 			path = fileChooser.getSelectedFile().getPath();
 		}	
-		else if (resultado==fileChooser.CANCEL_OPTION)
+		else if (resultado==JFileChooser.CANCEL_OPTION)
 			path = ".";
-			
-		listaCoches = reader.getCarListFromCSV(path);
-		vista.getButtonMayor().setEnabled(true);
-		vista.getButtonMayorMayor().setEnabled(true);
-		vista.getButtonMenor().setEnabled(true);
-		vista.getButtonMenorMenor().setEnabled(true);
-		vista.getBtnAnadirDatos().setEnabled(true);
-		vista.getBtnBorrarDatos().setEnabled(true);
-		vista.getBtnActualizarDatos().setEnabled(true);
-		vista.getTable().setEnabled(true);
-		manipular.insertarListaCoches(listaCoches);
-		manipular.completarArrays(listaCoches);
-		vista.getScrollPaneTablas().setViewportView(new JTable(manipular.getDatos(),manipular.getCabeceras()));
 		
+		if(listaCoches==null) {
+			listaCoches = reader.getCarListFromCSV(path);
+			manipular.insertarListaCoches(listaCoches);
+			manipular.completarArrays(listaCoches);
+			vista.getButtonMayor().setEnabled(true);
+			vista.getButtonMayorMayor().setEnabled(true);
+			vista.getButtonMenor().setEnabled(true);
+			vista.getButtonMenorMenor().setEnabled(true);
+			vista.getBtnAnadirDatos().setEnabled(true);
+			vista.getBtnBorrarDatos().setEnabled(true);
+			vista.getBtnActualizarDatos().setEnabled(true);
+			vista.getTable().setEnabled(true);
+			vista.getScrollPaneTablas().setViewportView(new JTable(manipular.getDatos(),manipular.getCabeceras()));
+		} 
 	}
 	
 	private void lanzarInputRecogerDatos() {
-		JOptionPane jOptionPane = new JOptionPane();
 		Object[] textFields = {
 				"Matricula", vista.getTextAnadirMatricula(),
 				"Marca", vista.getTextAnadirMarca(),
@@ -147,13 +150,28 @@ public class ControladorCSV implements ActionListener {
 				"Modelo", vista.getTextAnadirModelo(),
 				"Origen", vista.getTextAnadirOrigen()
 		};
-		jOptionPane.showConfirmDialog(null, textFields, "Añadir datos", JOptionPane.OK_CANCEL_OPTION);
+		int resultado = JOptionPane.showConfirmDialog(null, textFields, "Añadir datos", JOptionPane.OK_CANCEL_OPTION);
 		CochesDTO coche = new CochesDTO(vista.getTextAnadirMatricula().getText(), vista.getTextAnadirMarca().getText(), 
 				vista.getTextAnadirColor().getText(), vista.getTextAnadirModelo().getText(),
 				vista.getTextAnadirOrigen().getText());
+		if(resultado==JOptionPane.OK_OPTION) {
+			manipular.insertarCoche(coche);
+			listaCochesActualizados = manipular.listarCoches();
+			manipular.completarArrays(listaCochesActualizados);
 			
-		manipular.insertarCoche(coche);
-		vista.getScrollPaneTablas().setViewportView(new JTable(manipular.getDatos(),manipular.getCabeceras()));
-	}
+			// El siguiente trozo de código hace que la primera columna de la tabla no sea manipular 
+			DefaultTableModel model = new DefaultTableModel(manipular.getDatos(),manipular.getCabeceras()){
+				private static final long serialVersionUID = 1L;
 
+				@Override 
+			    public boolean isCellEditable(int row, int column)
+			    {
+			    	return column!=0;
+			    }
+			};
+			JTable tabla = new JTable();
+			tabla.setModel(model);
+			vista.getScrollPaneTablas().setViewportView(tabla);
+		}
+	}
 }

@@ -12,10 +12,21 @@ public class CochesDAOImp implements CochesDAO {
 	private String[] cabeceras = {"Matricula", "Marca", "Color", "Modelo", "Origen"};
 	private Object[][] datos;
 
-
 	@Override
 	public boolean crearBaseDatos() {
-		// TODO Auto-generated method stub
+		String sql = "CREATE TABLE coches ("
+				+ "matricula TEXT PRIMARY KEY,"
+		        + "coche TEXT,"
+		        + "color TEXT,"
+		        + "modelo TEXT,"
+		        + "origen TEXT "
+		        + ");";
+		try(PreparedStatement statement = conexion.prepareStatement(sql);
+				ResultSet result = statement.executeQuery();) {
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
 		return false;
 	}
 	
@@ -34,6 +45,8 @@ public class CochesDAOImp implements CochesDAO {
 		}
 	}
 	
+	// Devuelve la lista de coches de la base de datos
+	
 	@Override
 	public List<CochesDTO> listarCoches() {
 		List<CochesDTO> listaDeCoches = new ArrayList<>();
@@ -51,19 +64,79 @@ public class CochesDAOImp implements CochesDAO {
 		return listaDeCoches;
 	}
 
+	// Borra un solo coche
 	
 	@Override
-	public boolean borrarCoches(List<CochesDTO> lista) {
-		// TODO Auto-generated method stub
+	public boolean borrarCoche(CochesDTO coche) {
+		String sql = "DELETE FROM coches WHERE matricula=?;";
+		try(PreparedStatement preparedStatement = conexion.prepareStatement(sql);) {
+			preparedStatement.setString(1,coche.getMatricula());
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} 
 		return false;
 	}
-
+	
+	// Borra una lista de coches
+	
 	@Override
-	public boolean actualizarCoches(List<CochesDTO> lista) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean borrarListaCoches(List<CochesDTO> lista) {
+		try {
+			conexion.setAutoCommit(false);
+			for (CochesDTO cochesDTO : lista) {
+				borrarCoche(cochesDTO);
+			}
+			return true;
+		} catch (SQLException e1) {
+			try {
+				conexion.rollback();
+				return false;
+			} catch (SQLException e) {
+				return false;
+			}
+		}
 	}
 
+	// Actualiza un solo coche
+	
+	@Override
+	public boolean actualizarCoche(CochesDTO coche) {
+		String sql="UPDATE coches SET coche=?, color=?, modelo=?, origen=? WHERE matricula=?;";
+		try(PreparedStatement preparedStatement = conexion.prepareStatement(sql);) {
+			preparedStatement.setString(1,coche.getMarca());
+			preparedStatement.setString(2,coche.getColor());
+			preparedStatement.setString(3, coche.getModelo());
+			preparedStatement.setString(4, coche.getOrigen());
+			preparedStatement.setString(5,coche.getMatricula());
+			return preparedStatement.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	// Actualiza una lista de coches
+	
+	@Override
+	public boolean actualizarListaCoches(List<CochesDTO> lista) {
+		try {
+			conexion.setAutoCommit(false);
+			for (CochesDTO cochesDTO : lista) {
+				actualizarCoche(cochesDTO);
+			}
+			return true;
+		} catch (SQLException e1) {
+			try {
+				conexion.rollback();
+				return false;
+			} catch (SQLException e) {
+				return false;
+			}
+		}
+	}
+
+	// Inserta un solo coche
+	
 	@Override
 	public boolean insertarCoche(CochesDTO coche) {
 		String sql = "INSERT INTO coches (matricula, coche, color, modelo, origen) VALUES (?,?,?,?,?);";
@@ -79,6 +152,9 @@ public class CochesDAOImp implements CochesDAO {
 		}
 		return false;
 	}
+	
+	
+	// Inserta una lista de coches
 	
 	@Override
 	public boolean insertarListaCoches(List<CochesDTO> lista) {
@@ -113,8 +189,4 @@ public class CochesDAOImp implements CochesDAO {
 	public void setDatos(Object[][] datos) {
 		this.datos = datos;
 	}
-
-
-
-
 }
