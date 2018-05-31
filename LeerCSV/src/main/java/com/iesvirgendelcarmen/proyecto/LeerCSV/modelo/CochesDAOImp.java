@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,20 +15,32 @@ public class CochesDAOImp implements CochesDAO {
 
 	@Override
 	public boolean crearBaseDatos() {
-		String sql = "CREATE TABLE coches ("
+		String sql = "DROP TABLE IF EXISTS coches;"
+				+ "CREATE TABLE coches ("
 				+ "matricula TEXT PRIMARY KEY,"
 		        + "coche TEXT,"
 		        + "color TEXT,"
 		        + "modelo TEXT,"
 		        + "origen TEXT "
 		        + ");";
-		try(PreparedStatement statement = conexion.prepareStatement(sql);
-				ResultSet result = statement.executeQuery();) {
-		} catch (SQLException e) {
-			e.printStackTrace();
+		
+		try {
+			Statement st = conexion.createStatement();
+			st.executeUpdate(sql);
+			return true;
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+			return false;
 		}
 		
-		return false;
+		
+//		try(PreparedStatement statement = conexion.prepareStatement(sql);) {
+//			statement.executeUpdate();
+//			
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//			return false;
+//		}
 	}
 	
 	@Override
@@ -71,10 +84,12 @@ public class CochesDAOImp implements CochesDAO {
 		String sql = "DELETE FROM coches WHERE matricula=?;";
 		try(PreparedStatement preparedStatement = conexion.prepareStatement(sql);) {
 			preparedStatement.setString(1,coche.getMatricula());
+			return !preparedStatement.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
+			return !false;
 		} 
-		return false;
+		
 	}
 	
 	// Borra una lista de coches

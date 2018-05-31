@@ -9,7 +9,6 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import com.iesvirgendelcarmen.proyecto.LeerCSV.modelo.CochesDAOImp;
@@ -52,10 +51,15 @@ public class ControladorCSV implements ActionListener {
 				lanzarInputRecogerDatos();
 				break;
 			case "Actualizar datos":
-				System.out.println("Actualizar");
+				actualizarFilas();
 				break;
 			case "Borrar datos":
-				System.out.println("Borrar");
+				int resultado = JOptionPane.showConfirmDialog(null, "¿Seguro que quiere borrar esta fila?", "Borrar datos", JOptionPane.OK_CANCEL_OPTION);
+				if(resultado==JOptionPane.OK_OPTION) {
+					//borrarFila();
+					borrarFilas();
+				}
+				
 				break;
 			default:
 				break;
@@ -118,6 +122,7 @@ public class ControladorCSV implements ActionListener {
 	
 		//Metodo que escoge el fichero
 	private void lanzarEleccionFichero() {
+		
 		JFileChooser fileChooser = new JFileChooser("./ficherosCSV");
 		int resultado = fileChooser.showOpenDialog(vista.getFrame());
 		if(resultado==JFileChooser.APPROVE_OPTION) {
@@ -138,7 +143,8 @@ public class ControladorCSV implements ActionListener {
 			vista.getBtnBorrarDatos().setEnabled(true);
 			vista.getBtnActualizarDatos().setEnabled(true);
 			vista.getTable().setEnabled(true);
-			vista.getScrollPaneTablas().setViewportView(new JTable(manipular.getDatos(),manipular.getCabeceras()));
+			actualizarDatosEnTabla();
+			//vista.getScrollPaneTablas().setViewportView(new JTable(manipular.getDatos(),manipular.getCabeceras()));
 		} 
 	}
 	
@@ -156,22 +162,73 @@ public class ControladorCSV implements ActionListener {
 				vista.getTextAnadirOrigen().getText());
 		if(resultado==JOptionPane.OK_OPTION) {
 			manipular.insertarCoche(coche);
-			listaCochesActualizados = manipular.listarCoches();
-			manipular.completarArrays(listaCochesActualizados);
-			
-			// El siguiente trozo de código hace que la primera columna de la tabla no sea manipular 
-			DefaultTableModel model = new DefaultTableModel(manipular.getDatos(),manipular.getCabeceras()){
-				private static final long serialVersionUID = 1L;
-
-				@Override 
-			    public boolean isCellEditable(int row, int column)
-			    {
-			    	return column!=0;
-			    }
-			};
-			JTable tabla = new JTable();
-			tabla.setModel(model);
-			vista.getScrollPaneTablas().setViewportView(tabla);
+			actualizarDatosEnTabla();
 		}
+	}
+	
+	// El siguiente método hace que la primera columna de la tabla no sea manipular y pinta la tabla
+	
+	private void actualizarDatosEnTabla() {
+		List<CochesDTO> lista = manipular.listarCoches();
+		manipular.completarArrays(lista);
+		DefaultTableModel model = new DefaultTableModel(manipular.getDatos(), manipular.getCabeceras()){
+			private static final long serialVersionUID = 1L;
+			@Override 
+		    public boolean isCellEditable(int row, int column){
+		    	return column!=0;
+		    }
+		};
+		vista.getTable().setModel(model);
+		vista.getScrollPaneTablas().setViewportView(vista.getTable());
+	}
+
+	private void actualizarFilas() {
+	    List<CochesDTO> listaCochesSeleccionados = new ArrayList<>();
+	    String matricula;
+	    String marca;
+		String color;
+		String modelo;
+		String origen;
+	    if (vista.getTable().getRowCount() > 0) {
+	        if (vista.getTable().getSelectedRowCount() > 0) {
+	            int selectedRow[] = vista.getTable().getSelectedRows();
+	            for (int i : selectedRow) {
+	            	matricula =vista.getTable().getValueAt(i, 0).toString();
+	        		marca = vista.getTable().getValueAt(i, 1).toString();
+	        		color = vista.getTable().getValueAt(i, 2).toString();
+	        		modelo = vista.getTable().getValueAt(i, 3).toString();
+	        		origen = vista.getTable().getValueAt(i, 4).toString();
+	        		CochesDTO coche = new CochesDTO(matricula, marca, color, modelo, origen);
+	        		listaCochesSeleccionados.add(coche);
+	            }
+	            manipular.actualizarListaCoches(listaCochesSeleccionados);
+	            actualizarDatosEnTabla();
+	        }
+	    }
+	}
+	
+	private void borrarFilas() {
+	    List<CochesDTO> listaCochesSeleccionados = new ArrayList<>();
+	    String matricula;
+	    String marca;
+		String color;
+		String modelo;
+		String origen;
+	    if (vista.getTable().getRowCount() > 0) {
+	        if (vista.getTable().getSelectedRowCount() > 0) {
+	            int selectedRow[] = vista.getTable().getSelectedRows();
+	            for (int i : selectedRow) {
+	            	matricula =vista.getTable().getValueAt(i, 0).toString();
+	        		marca = vista.getTable().getValueAt(i, 1).toString();
+	        		color = vista.getTable().getValueAt(i, 2).toString();
+	        		modelo = vista.getTable().getValueAt(i, 3).toString();
+	        		origen = vista.getTable().getValueAt(i, 4).toString();
+	        		CochesDTO coche = new CochesDTO(matricula, marca, color, modelo, origen);
+					listaCochesSeleccionados.add(coche);
+	            }
+	            manipular.borrarListaCoches(listaCochesSeleccionados);
+	            actualizarDatosEnTabla();
+	        }
+	    }
 	}
 }
