@@ -26,10 +26,11 @@ public class Conexion {
 				final String BD = p.getProperty("BD");
 
 				Class.forName(DRIVER);
-
+				
 				SQLiteConfig config = new SQLiteConfig();
 				config.enforceForeignKeys(true);
 				conexion = DriverManager.getConnection(DB_URL+BD,config.toProperties());
+				conexion.setAutoCommit(false);
 
 			} catch ( ClassNotFoundException | SQLException e ) {
 				e.printStackTrace ();

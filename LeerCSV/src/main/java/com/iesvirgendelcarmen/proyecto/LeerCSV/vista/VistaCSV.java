@@ -17,6 +17,8 @@ import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import java.awt.FlowLayout;
 import javax.swing.JComboBox;
+import javax.swing.border.LineBorder;
+import java.awt.Color;
 
 public class VistaCSV {
 
@@ -54,6 +56,11 @@ public class VistaCSV {
 	private JButton btnReset;
 	private JButton btnBuscar;
 	private JPanel panelContenedorBotonesCB;
+	private JPanel panelSiguienteAnterior;
+	private JButton btnSiguiente;
+	private JButton btnAnterior;
+	private JPanel panelTablas;
+	private JMenuItem mntmGuardar;
 	
 	public VistaCSV() {
 		initialize();
@@ -62,8 +69,10 @@ public class VistaCSV {
 
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 560);
+		frame.setBounds(100, 100, 450, 566);
+		frame.setTitle("Proyecto de Programación de Izan Ortiz Serrano");
 		frame.setLocationRelativeTo(null);
+		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		JMenuBar menuBar = new JMenuBar();
@@ -74,6 +83,9 @@ public class VistaCSV {
 		
 		mntmCargarDatos = new JMenuItem("Cargar datos");
 		mnArchivo.add(mntmCargarDatos);
+		
+		mntmGuardar = new JMenuItem("Guardar");
+		mnArchivo.add(mntmGuardar);
 		
 		mntmSalir = new JMenuItem("Salir");
 		mnArchivo.add(mntmSalir);
@@ -86,6 +98,7 @@ public class VistaCSV {
 		tabbedPane.addTab("Filtros", null, splitPane, null);
 		
 		JPanel panelDerecho = new JPanel();
+		panelDerecho.setBorder(new LineBorder(Color.GRAY, 3));
 		splitPane.setRightComponent(panelDerecho);
 		panelDerecho.setLayout(new GridLayout(0, 1, 0, 0));
 		
@@ -130,6 +143,8 @@ public class VistaCSV {
 		textFieldOrigen.setColumns(10);
 		
 		JPanel panelBotones = new JPanel();
+		FlowLayout flowLayout = (FlowLayout) panelBotones.getLayout();
+		flowLayout.setVgap(12);
 		panelDerecho.add(panelBotones);
 		
 		buttonMenorMenor = new JButton("<<");
@@ -145,6 +160,7 @@ public class VistaCSV {
 		panelBotones.add(buttonMayorMayor);
 		
 		JPanel panelIzquierdo = new JPanel();
+		panelIzquierdo.setBorder(new LineBorder(Color.GRAY, 3));
 		splitPane.setLeftComponent(panelIzquierdo);
 		panelIzquierdo.setLayout(new GridLayout(0, 1, 0, 0));
 		
@@ -187,23 +203,37 @@ public class VistaCSV {
 		panelBotonesComboBox.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		
 		btnBuscar = new JButton("Buscar");
+		btnBuscar.setEnabled(false);
 		panelBotonesComboBox.add(btnBuscar);
 		
 		btnReset = new JButton("Reset");
+		btnReset.setEnabled(false);
 		panelBotonesComboBox.add(btnReset);
 		
-		JPanel panelTablas = new JPanel();
+		panelTablas = new JPanel();
+		panelTablas.setBorder(new LineBorder(Color.GRAY, 3));
 		tabbedPane.addTab("Tablas", null, panelTablas, null);
 		panelTablas.setLayout(new BorderLayout(0, 0));
 		
-		scrollPaneTablas = new JScrollPane();
+		scrollPaneTablas = new JScrollPane(table,JScrollPane.VERTICAL_SCROLLBAR_NEVER,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPaneTablas.setEnabled(false);
-		panelTablas.add(scrollPaneTablas,BorderLayout.NORTH);
+//		panelTablas.add(scrollPaneTablas,BorderLayout.CENTER);
 		
 		table = new JTable();
 		
+		panelSiguienteAnterior = new JPanel();
+		panelTablas.add(panelSiguienteAnterior, BorderLayout.SOUTH);
+		
+		btnAnterior = new JButton("Anterior");
+		btnAnterior.setEnabled(false);
+		panelSiguienteAnterior.add(btnAnterior);
+		
+		btnSiguiente = new JButton("Siguiente");
+		btnSiguiente.setEnabled(false);
+		panelSiguienteAnterior.add(btnSiguiente);
+		
 		JPanel panelBotonesTablas = new JPanel();
-		panelTablas.add(panelBotonesTablas);
+		panelTablas.add(panelBotonesTablas, BorderLayout.NORTH);
 		panelBotonesTablas.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		
 		btnAnadirDatos = new JButton("Anadir datos");
@@ -226,6 +256,26 @@ public class VistaCSV {
 		table.setEnabled(false);
 		
 		
+	}
+
+	public JMenuItem getMntmGuardar() {
+		return mntmGuardar;
+	}
+
+	public void setMntmGuardar(JMenuItem mntmGuardar) {
+		this.mntmGuardar = mntmGuardar;
+	}
+
+	public JButton getBtnAnterior() {
+		return btnAnterior;
+	}
+
+	public void setBtnAnterior(JButton btnAnterior) {
+		this.btnAnterior = btnAnterior;
+	}
+
+	public void setBtnBuscar(JButton btnBuscar) {
+		this.btnBuscar = btnBuscar;
 	}
 
 	public JFrame getFrame() {
@@ -420,8 +470,24 @@ public class VistaCSV {
 		return btnReset;
 	}
 
+	public JButton getBtnSiguiente() {
+		return btnSiguiente;
+	}
+
+	public void setBtnSiguiente(JButton btnSiguiente) {
+		this.btnSiguiente = btnSiguiente;
+	}
+
 	public JButton getBtnBuscar() {
 		return btnBuscar;
+	}
+
+	public JPanel getPanelTablas() {
+		return panelTablas;
+	}
+
+	public void setPanelTablas(JPanel panelTablas) {
+		this.panelTablas = panelTablas;
 	}
 	
 }

@@ -32,15 +32,6 @@ public class CochesDAOImp implements CochesDAO {
 			e1.printStackTrace();
 			return false;
 		}
-		
-		
-//		try(PreparedStatement statement = conexion.prepareStatement(sql);) {
-//			statement.executeUpdate();
-//			
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//			return false;
-//		}
 	}
 	
 	@Override
@@ -101,7 +92,7 @@ public class CochesDAOImp implements CochesDAO {
 	@Override
 	public boolean borrarListaCoches(List<CochesDTO> lista) {
 		try {
-			conexion.setAutoCommit(false);
+			conexion.setAutoCommit(true);
 			for (CochesDTO cochesDTO : lista) {
 				borrarCoche(cochesDTO);
 			}
@@ -139,7 +130,7 @@ public class CochesDAOImp implements CochesDAO {
 	@Override
 	public boolean actualizarListaCoches(List<CochesDTO> lista) {
 		try {
-			conexion.setAutoCommit(false);
+			conexion.setAutoCommit(true);
 			for (CochesDTO cochesDTO : lista) {
 				actualizarCoche(cochesDTO);
 			}
@@ -172,13 +163,12 @@ public class CochesDAOImp implements CochesDAO {
 		return false;
 	}
 	
-	
 	// Inserta una lista de coches
 	
 	@Override
 	public boolean insertarListaCoches(List<CochesDTO> lista) {
 		try {
-			conexion.setAutoCommit(false);
+			conexion.setAutoCommit(true);
 			for (CochesDTO cochesDTO : lista) {
 				insertarCoche(cochesDTO);
 			}
@@ -191,6 +181,16 @@ public class CochesDAOImp implements CochesDAO {
 				return false;
 			}
 		} 
+	}
+	
+	@Override
+	public void hacerCommit() {
+		try {
+			conexion.setAutoCommit(false);
+			conexion.commit();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public String[] getCabeceras() {

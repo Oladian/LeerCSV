@@ -12,4 +12,5 @@ public interface CochesDAO {
 	boolean insertarCoche(CochesDTO coche);
 	boolean insertarListaCoches(List<CochesDTO> lista);
 	boolean crearBaseDatos();
+	void hacerCommit();
 }

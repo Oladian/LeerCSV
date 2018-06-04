@@ -1,4 +1,4 @@
-package com.iesvirgendelcarmen.proyecto.LeerCSV.modelo;
+ackage com.iesvirgendelcarmen.proyecto.LeerCSV.modelo;
 
 import com.opencsv.bean.CsvBindByName;
 

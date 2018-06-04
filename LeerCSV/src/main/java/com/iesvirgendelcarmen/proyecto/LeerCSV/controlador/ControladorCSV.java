@@ -1,5 +1,7 @@
 package com.iesvirgendelcarmen.proyecto.LeerCSV.controlador;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -11,6 +13,8 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
 import javax.swing.table.DefaultTableModel;
 
 import com.iesvirgendelcarmen.proyecto.LeerCSV.modelo.CochesDAOImp;
@@ -20,6 +24,9 @@ import com.iesvirgendelcarmen.proyecto.LeerCSV.modelo.ReadCSV;
 import com.iesvirgendelcarmen.proyecto.LeerCSV.vista.VistaCSV;
 
 public class ControladorCSV implements ActionListener {
+	int alto;
+	Dimension dimension;
+	JScrollBar barra;
 	String path=".";
 	List<CochesDTO> listaCochesActualizados = new ArrayList<>();
 	static List<CochesDTO> listaCochesEstatica = new ArrayList<>();
@@ -30,10 +37,13 @@ public class ControladorCSV implements ActionListener {
 	
 	private List<CochesDTO> listaCoches;
 	private VistaCSV vista;
+	JScrollPane scrollPane; 
 	private int posicion=0;
 	private Set<String> colores = new HashSet<>();
 	private Set<String> marcas = new HashSet<>();
 	private Set<String> origenes = new HashSet<>();
+	
+	private int filas = 15;
 	
 	public ControladorCSV(VistaCSV vista) {
 		this.vista = vista;
@@ -60,6 +70,7 @@ public class ControladorCSV implements ActionListener {
 			case "Anadir datos":
 				try {
 					lanzarInputRecogerDatos();
+					vista.getMntmGuardar().setEnabled(true);
 				} catch (ExcepcionDTO e1) {
 					dialogoError("Error añadiendo datos");
 				}
@@ -67,6 +78,7 @@ public class ControladorCSV implements ActionListener {
 			case "Actualizar datos":
 				try {
 					actualizarFilas();
+					vista.getMntmGuardar().setEnabled(true);
 				} catch (ExcepcionDTO e1) {
 					dialogoError("Error actualizando datos");
 					e1.printStackTrace();
@@ -75,9 +87,9 @@ public class ControladorCSV implements ActionListener {
 			case "Borrar datos":
 				int resultado = JOptionPane.showConfirmDialog(null, "¿Seguro que quiere borrar esta fila?", "Borrar datos", JOptionPane.OK_CANCEL_OPTION);
 				if(resultado==JOptionPane.OK_OPTION) {
-					//borrarFila();
 					try {
 						borrarFilas();
+						vista.getMntmGuardar().setEnabled(true);
 					} catch (ExcepcionDTO e1) {
 						e1.printStackTrace();
 						dialogoError("Error borrando datos");
@@ -86,7 +98,6 @@ public class ControladorCSV implements ActionListener {
 				break;
 			case "Buscar":
 				listaCoches = datosCSVFiltrados(listaCochesEstatica);
-				System.out.println("------------------->"+listaCoches.size());
 				posicion=0;
 				vista.getBtnBuscar().setEnabled(false);
 				vista.getBtnReset().setEnabled(true);
@@ -97,6 +108,18 @@ public class ControladorCSV implements ActionListener {
 				vista.getBtnBuscar().setEnabled(true);
 				vista.getBtnReset().setEnabled(false);
 				break;
+			case "Siguiente":
+				alto = vista.getTable().getRowHeight() * (filas - 1);
+				barra = scrollPane.getVerticalScrollBar();
+				barra.setValue( barra.getValue() + alto );
+				actualizarDatosEnTabla();
+				break;
+			case "Anterior":
+				alto = vista.getTable().getRowHeight() * (filas-1);
+				barra = scrollPane.getVerticalScrollBar();
+				barra.setValue( barra.getValue() - alto );
+				break;
+				
 			default:
 				break;
 			}
@@ -105,8 +128,11 @@ public class ControladorCSV implements ActionListener {
 				if(posicion<0)
 					posicion+=listaCoches.size();
 				colocarFormularioCoche(posicion);
-			} else
+			} else {
 				dialogoError("No existen coches con esos parámetros.");
+				vista.getBtnBuscar().setEnabled(true);
+				vista.getBtnReset().setEnabled(false);
+			}
 		}
 		
 		if (e.getSource().getClass() == JMenuItem.class) {
@@ -125,6 +151,10 @@ public class ControladorCSV implements ActionListener {
 					vista.getMntmCargarDatos().setEnabled(false);
 					if (posicion>=0 && posicion<=1000)
 						colocarFormularioCoche(posicion);
+					break;
+				case "Guardar":
+					manipular.hacerCommit();
+					vista.getMntmGuardar().setEnabled(false);
 					break;
 				default:
 					break;
@@ -145,10 +175,12 @@ public class ControladorCSV implements ActionListener {
 		vista.getBtnBorrarDatos().addActionListener(this);
 		vista.getBtnBuscar().addActionListener(this);
 		vista.getBtnReset().addActionListener(this);
-		
+		vista.getBtnAnterior().addActionListener(this);
+		vista.getBtnSiguiente().addActionListener(this);
 		// Menús
 		vista.getMntmCargarDatos().addActionListener(this);
 		vista.getMntmSalir().addActionListener(this);
+		vista.getMntmGuardar().addActionListener(this);
 	}
 	
 		// Formulario para CSV
@@ -169,13 +201,26 @@ public class ControladorCSV implements ActionListener {
 		int resultado = fileChooser.showOpenDialog(vista.getFrame());
 		if(resultado==JFileChooser.APPROVE_OPTION) {
 			path = fileChooser.getSelectedFile().getPath();
-		}	
+		}
+		/*
+		 * 
+		 * 
+		 * HAY QUE PONER LA CREACIÓN DE LA BASE DE DATOS SI NO EXISTE
+		 * 
+		 * 
+		 */
 		else if (resultado==JFileChooser.CANCEL_OPTION)
 			path = ".";
 		
 		if(listaCoches==null) {
 			listaCochesEstatica = reader.getCarListFromCSV(path);
 			listaCoches = listaCochesEstatica;
+			
+			if(manipular.listarCoches().size()<=0 ) {
+				manipular.crearBaseDatos();
+				manipular.insertarListaCoches(listaCoches);
+				manipular.completarArrays(listaCoches);
+			}
 			
 			for (CochesDTO coche : listaCoches) {
 				colores.add(coche.getColor());
@@ -202,8 +247,7 @@ public class ControladorCSV implements ActionListener {
 			vista.getComboBoxColor().setEnabled(true);
 			vista.getComboBoxMarca().setEnabled(true);
 			vista.getComboBoxOrigen().setEnabled(true);
-			manipular.insertarListaCoches(listaCoches);
-			manipular.completarArrays(listaCoches);
+			
 			vista.getButtonMayor().setEnabled(true);
 			vista.getButtonMayorMayor().setEnabled(true);
 			vista.getButtonMenor().setEnabled(true);
@@ -212,11 +256,15 @@ public class ControladorCSV implements ActionListener {
 			vista.getBtnBorrarDatos().setEnabled(true);
 			vista.getBtnActualizarDatos().setEnabled(true);
 			vista.getTable().setEnabled(true);
+			vista.getBtnBuscar().setEnabled(true);
+			vista.getBtnSiguiente().setEnabled(true);
+			vista.getBtnAnterior().setEnabled(true);
+			scrollPane = new JScrollPane(vista.getTable(),JScrollPane.VERTICAL_SCROLLBAR_NEVER,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 			actualizarDatosEnTabla();
-			//vista.getScrollPaneTablas().setViewportView(new JTable(manipular.getDatos(),manipular.getCabeceras()));
 		} 
 	}
 	
+	// Método que lanzará un input para almacenar los datos recogidos por el teclado
 	private void lanzarInputRecogerDatos() throws ExcepcionDTO {
 		Object[] textFields = {
 				"Matricula", vista.getTextAnadirMatricula(),
@@ -235,7 +283,7 @@ public class ControladorCSV implements ActionListener {
 		}
 	}
 	
-	// El siguiente método hace que la primera columna de la tabla no sea manipular y pinta la tabla
+	// El siguiente método hace que la primera columna de la tabla no sea manipulable y repinta la tabla
 	
 	private void actualizarDatosEnTabla() {
 		List<CochesDTO> lista = manipular.listarCoches();
@@ -247,8 +295,10 @@ public class ControladorCSV implements ActionListener {
 		    	return column!=0;
 		    }
 		};
+		dimension = vista.getTable().getPreferredSize();
 		vista.getTable().setModel(model);
-		vista.getScrollPaneTablas().setViewportView(vista.getTable());
+		scrollPane.setPreferredSize(new Dimension(dimension.width, vista.getTable().getRowHeight()*filas));
+		vista.getPanelTablas().add(scrollPane, BorderLayout.CENTER);
 	}
 
 	private void actualizarFilas() throws ExcepcionDTO {
@@ -301,24 +351,33 @@ public class ControladorCSV implements ActionListener {
 	    }
 	}
 	
+	// Método que permite realizar búsquedas en el fichero CSV
+	
 	private List<CochesDTO> datosCSVFiltrados(List<CochesDTO> lista) {
 		listaFiltrado.clear();
 		String color = (String) vista.getComboBoxColor().getSelectedItem();
 		String marca = (String) vista.getComboBoxMarca().getSelectedItem();
 		String origen = (String) vista.getComboBoxOrigen().getSelectedItem();
 		for (CochesDTO coche : lista) {
-			if(coche.getColor().equals(color) || coche.getMarca().equals(marca) || coche.getOrigen().equals(origen)) {
-				if(coche.getColor().equals(color) && coche.getOrigen().equals(origen))
-					listaFiltrado.add(coche);
-				if(coche.getMarca().equals(marca) && coche.getOrigen().equals(origen))
-					listaFiltrado.add(coche);
-				if(coche.getColor().equals(color) && coche.getMarca().equals(marca))
-					listaFiltrado.add(coche);
+			if(coche.getColor().equals(color) && coche.getMarca().equals(marca) && coche.getOrigen().equals(origen)) {
+				listaFiltrado.add(coche);
+			} else if(coche.getColor().equals(color) && coche.getMarca().equals(marca) && origen.equals("--")) {
+				listaFiltrado.add(coche);
+			} else if (coche.getMarca().equals(marca) && coche.getOrigen().equals(origen) && color.equals("--")) { 
+				listaFiltrado.add(coche);
+			} else if (coche.getColor().equals(color) && coche.getOrigen().equals(origen) && marca.equals("--")){
+				listaFiltrado.add(coche);
+			} else if (coche.getColor().equals(color) && marca.equals("--") && origen.equals("--")) {
+				listaFiltrado.add(coche);
+			} else if (coche.getMarca().equals(marca) && origen.matches("--") && color.equals("--")) {
+				listaFiltrado.add(coche);
+			} else if (coche.getOrigen().equals(origen) && marca.equals("--") && color.equals("--")) {
+				listaFiltrado.add(coche);
 			}
-		}
+		}	
 		return listaFiltrado;
 	}
-	
+
 	private void dialogoError(String string) {
 		JOptionPane.showMessageDialog(null, string, "ERROR", 1);
 	}
