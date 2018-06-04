@@ -6,6 +6,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.plaf.synth.SynthSpinnerUI;
+
 import com.opencsv.CSVParser;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
@@ -32,7 +35,9 @@ public class ReadCSV {
 				}
 			} catch (IOException e) {
 				System.out.println("IO Exception");		
-				}
+				} catch (ExcepcionDTO e) {
+				e.printStackTrace();
+			}
 			return carList;
 	}
 }

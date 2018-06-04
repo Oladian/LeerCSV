@@ -16,6 +16,7 @@ import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import java.awt.FlowLayout;
+import javax.swing.JComboBox;
 
 public class VistaCSV {
 
@@ -43,6 +44,17 @@ public class VistaCSV {
 	private JTextField textAnadirModelo = new JTextField();
 	private JTextField textAnadirOrigen = new JTextField();
 	
+	private JPanel panelComboBox1;
+	private JPanel panelComboBox2;
+	private JComboBox<String> comboBoxColor;
+	private JComboBox<String> comboBoxMarca;
+	private JPanel panelComboBox3;
+	private JComboBox<String> comboBoxOrigen;
+	private JPanel panelBotonesComboBox;
+	private JButton btnReset;
+	private JButton btnBuscar;
+	private JPanel panelContenedorBotonesCB;
+	
 	public VistaCSV() {
 		initialize();
 		frame.setVisible(true);
@@ -50,7 +62,8 @@ public class VistaCSV {
 
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 452, 545);
+		frame.setBounds(100, 100, 450, 560);
+		frame.setLocationRelativeTo(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		JMenuBar menuBar = new JMenuBar();
@@ -69,6 +82,7 @@ public class VistaCSV {
 		frame.getContentPane().add(tabbedPane, BorderLayout.CENTER);
 		
 		JSplitPane splitPane = new JSplitPane();
+		splitPane.setResizeWeight(0.25);
 		tabbedPane.addTab("Filtros", null, splitPane, null);
 		
 		JPanel panelDerecho = new JPanel();
@@ -132,6 +146,51 @@ public class VistaCSV {
 		
 		JPanel panelIzquierdo = new JPanel();
 		splitPane.setLeftComponent(panelIzquierdo);
+		panelIzquierdo.setLayout(new GridLayout(0, 1, 0, 0));
+		
+		panelComboBox1 = new JPanel();
+		panelIzquierdo.add(panelComboBox1);
+		
+		JLabel lblColor_1 = new JLabel("Color");
+		panelComboBox1.add(lblColor_1);
+		
+		comboBoxColor = new JComboBox<String>();
+		comboBoxColor.setEnabled(false);
+		panelComboBox1.add(comboBoxColor);
+		
+		panelComboBox2 = new JPanel();
+		panelIzquierdo.add(panelComboBox2);
+		
+		JLabel lblMarca_1 = new JLabel("Marca");
+		panelComboBox2.add(lblMarca_1);
+		
+		comboBoxMarca = new JComboBox<String>();
+		comboBoxMarca.setEnabled(false);
+		panelComboBox2.add(comboBoxMarca);
+		
+		panelComboBox3 = new JPanel();
+		panelIzquierdo.add(panelComboBox3);
+		
+		JLabel lblOrigen_1 = new JLabel("Origen");
+		panelComboBox3.add(lblOrigen_1);
+		
+		comboBoxOrigen = new JComboBox<String>();
+		comboBoxOrigen.setEnabled(false);
+		panelComboBox3.add(comboBoxOrigen);
+		
+		panelContenedorBotonesCB = new JPanel();
+		panelIzquierdo.add(panelContenedorBotonesCB);
+		panelContenedorBotonesCB.setLayout(new BorderLayout(0, 0));
+		
+		panelBotonesComboBox = new JPanel();
+		panelContenedorBotonesCB.add(panelBotonesComboBox);
+		panelBotonesComboBox.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		
+		btnBuscar = new JButton("Buscar");
+		panelBotonesComboBox.add(btnBuscar);
+		
+		btnReset = new JButton("Reset");
+		panelBotonesComboBox.add(btnReset);
 		
 		JPanel panelTablas = new JPanel();
 		tabbedPane.addTab("Tablas", null, panelTablas, null);
@@ -343,6 +402,26 @@ public class VistaCSV {
 
 	public void setTextAnadirOrigen(JTextField textAnadirOrigen) {
 		this.textAnadirOrigen = textAnadirOrigen;
+	}
+
+	public JComboBox<String> getComboBoxColor() {
+		return comboBoxColor;
+	}
+
+	public JComboBox<String> getComboBoxMarca() {
+		return comboBoxMarca;
+	}
+
+	public JComboBox<String> getComboBoxOrigen() {
+		return comboBoxOrigen;
+	}
+
+	public JButton getBtnReset() {
+		return btnReset;
+	}
+
+	public JButton getBtnBuscar() {
+		return btnBuscar;
 	}
 	
 }

@@ -7,12 +7,17 @@ public class CochesDTO {
 	private String modelo;
 	private String origen;
 	
-	public CochesDTO(String matricula, String marca, String color, String modelo, String origen) {
-		this.matricula = matricula;
-		this.marca = marca;
-		this.color = color;
-		this.modelo = modelo;
-		this.origen = origen;
+	public CochesDTO(String matricula, String marca, String color, String modelo, String origen) throws ExcepcionDTO {
+		
+		String regex = "[A-Z0-9]{17}";
+		if(matricula.matches(regex)) {
+			this.matricula = matricula;
+			this.marca = marca;
+			this.color = color;
+			this.modelo = modelo;
+			this.origen = origen;
+		} else
+			throw new ExcepcionDTO("Matrícula incorrecta.");
 	}
 
 	public String getMatricula() {
