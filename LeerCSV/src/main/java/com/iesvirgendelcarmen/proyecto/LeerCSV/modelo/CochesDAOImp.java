@@ -12,6 +12,7 @@ public class CochesDAOImp implements CochesDAO {
 	Connection conexion = Conexion.getConexion();
 	private String[] cabeceras = {"Matricula", "Marca", "Color", "Modelo", "Origen"};
 	private Object[][] datos;
+	private CrearLog log = new CrearLog();
 
 	@Override
 	public boolean crearBaseDatos() {
@@ -29,7 +30,7 @@ public class CochesDAOImp implements CochesDAO {
 			st.executeUpdate(sql);
 			return true;
 		} catch (SQLException e1) {
-			e1.printStackTrace();
+			log.crearLog("Error creando base de datos. Base de datos ya existe.", null);
 			return false;
 		}
 	}
@@ -49,25 +50,50 @@ public class CochesDAOImp implements CochesDAO {
 		}
 	}
 	
+	// Devuelve la lista de coches según una matrícula
+	
+	@Override
+	public CochesDTO listaFromMatricula(String matricula){
+//		List<CochesDTO> lista = new ArrayList<>();
+		String sql = "SELECT * FROM coches WHERE matricula = ?;";
+		
+		try(PreparedStatement statement = conexion.prepareStatement(sql);
+				) {
+			statement.setString(1,matricula);
+			statement.executeQuery();
+			ResultSet result = statement.executeQuery();
+			CochesDTO coche = new CochesDTO(result.getString(1), result.getString(2), result.getString(3), result.getString(4), result.getString(5));
+		
+			return coche;
+		} catch (SQLException e) {
+			System.out.println("Null1");
+			return null;
+		} catch (ExcepcionDTO e) {
+			System.out.println("Null2");
+			return null;
+		}
+	}
+	
 	// Devuelve la lista de coches de la base de datos
 	
 	@Override
 	public List<CochesDTO> listarCoches() {
 		List<CochesDTO> listaDeCoches = new ArrayList<>();
 		String sql = "SELECT * FROM coches;";
+		CochesDTO coche;
 		
 		try(PreparedStatement statement = conexion.prepareStatement(sql);
 				ResultSet result = statement.executeQuery();) {
 			while(result.next()) {
 				try {
-					CochesDTO coche = new CochesDTO(result.getString(1), result.getString(2), result.getString(3), result.getString(4), result.getString(5));
+					coche = new CochesDTO(result.getString(1), result.getString(2), result.getString(3), result.getString(4), result.getString(5));
 					listaDeCoches.add(coche);
 				} catch (ExcepcionDTO e) {
-					e.printStackTrace();
+					log.crearLog("Error de lectura de la base de datos.",result.getString(1));
 				}
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			
 		}
 		return listaDeCoches;
 	}
@@ -81,7 +107,7 @@ public class CochesDAOImp implements CochesDAO {
 			preparedStatement.setString(1,coche.getMatricula());
 			return !preparedStatement.execute();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			log.crearLog("Error de borrado en la base de datos.",coche.getMatricula());
 			return !false;
 		} 
 		
@@ -100,8 +126,10 @@ public class CochesDAOImp implements CochesDAO {
 		} catch (SQLException e1) {
 			try {
 				conexion.rollback();
+				log.crearLog("Se ha ejecutado un rollback al no poder realizar el borrado de datos.",null);
 				return false;
 			} catch (SQLException e) {
+				log.crearLog("Error al ejecutar rollback.",null);
 				return false;
 			}
 		}
@@ -120,7 +148,7 @@ public class CochesDAOImp implements CochesDAO {
 			preparedStatement.setString(5,coche.getMatricula());
 			return preparedStatement.execute();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			log.crearLog("Error de actualizado de la base de datos.",coche.getMatricula());
 			return false;
 		}
 	}
@@ -138,8 +166,10 @@ public class CochesDAOImp implements CochesDAO {
 		} catch (SQLException e1) {
 			try {
 				conexion.rollback();
+				log.crearLog("Se ha ejecutado un rollback al no poder realizar la actualización de datos.",null);
 				return false;
 			} catch (SQLException e) {
+				log.crearLog("Error al ejecutar rollback.",null);
 				return false;
 			}
 		}
@@ -158,7 +188,7 @@ public class CochesDAOImp implements CochesDAO {
 			statement.setString(5, coche.getOrigen());
 			return statement.execute();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			log.crearLog("Error de inserción en la base de datos.",null);
 		}
 		return false;
 	}
@@ -176,8 +206,10 @@ public class CochesDAOImp implements CochesDAO {
 		} catch (SQLException e1) {
 			try {
 				conexion.rollback();
+				log.crearLog("Se ha ejecutado un rollback al no poder realizar la inserción de datos.",null);
 				return false;
 			} catch (SQLException e) {
+				log.crearLog("Error al ejecutar rollback.",null);
 				return false;
 			}
 		} 
@@ -189,7 +221,7 @@ public class CochesDAOImp implements CochesDAO {
 			conexion.setAutoCommit(false);
 			conexion.commit();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			log.crearLog("No se ha podido realizar el commit.",null);
 		}
 	}
 

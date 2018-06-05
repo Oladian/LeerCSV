@@ -61,6 +61,7 @@ public class VistaCSV {
 	private JButton btnAnterior;
 	private JPanel panelTablas;
 	private JMenuItem mntmGuardar;
+	private JButton btnBuscarEnTabla;
 	
 	public VistaCSV() {
 		initialize();
@@ -253,6 +254,11 @@ public class VistaCSV {
 		btnAnadirDatos.setEnabled(false);
 		btnBorrarDatos.setEnabled(false);
 		btnActualizarDatos.setEnabled(false);
+		
+		btnBuscarEnTabla = new JButton("Buscar");
+		btnBuscarEnTabla.setActionCommand("BuscarTabla");
+		btnBuscarEnTabla.setEnabled(false);
+		panelBotonesTablas.add(btnBuscarEnTabla);
 		table.setEnabled(false);
 		
 		
@@ -488,6 +494,14 @@ public class VistaCSV {
 
 	public void setPanelTablas(JPanel panelTablas) {
 		this.panelTablas = panelTablas;
+	}
+
+	public JButton getBtnBuscarEnTabla() {
+		return btnBuscarEnTabla;
+	}
+
+	public void setBtnBuscarEnTabla(JButton btnBuscarEnTabla) {
+		this.btnBuscarEnTabla = btnBuscarEnTabla;
 	}
 	
 }

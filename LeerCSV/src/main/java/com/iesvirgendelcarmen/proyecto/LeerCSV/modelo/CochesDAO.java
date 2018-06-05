@@ -12,5 +12,6 @@ public interface CochesDAO {
 	boolean insertarCoche(CochesDTO coche);
 	boolean insertarListaCoches(List<CochesDTO> lista);
 	boolean crearBaseDatos();
+	CochesDTO listaFromMatricula(String matricula);
 	void hacerCommit();
 }

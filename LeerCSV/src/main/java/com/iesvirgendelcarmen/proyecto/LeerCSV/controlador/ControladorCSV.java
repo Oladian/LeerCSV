@@ -19,6 +19,7 @@ import javax.swing.table.DefaultTableModel;
 
 import com.iesvirgendelcarmen.proyecto.LeerCSV.modelo.CochesDAOImp;
 import com.iesvirgendelcarmen.proyecto.LeerCSV.modelo.CochesDTO;
+import com.iesvirgendelcarmen.proyecto.LeerCSV.modelo.CrearLog;
 import com.iesvirgendelcarmen.proyecto.LeerCSV.modelo.ExcepcionDTO;
 import com.iesvirgendelcarmen.proyecto.LeerCSV.modelo.ReadCSV;
 import com.iesvirgendelcarmen.proyecto.LeerCSV.vista.VistaCSV;
@@ -28,11 +29,14 @@ public class ControladorCSV implements ActionListener {
 	Dimension dimension;
 	JScrollBar barra;
 	String path=".";
+	CrearLog log = new CrearLog();
+	
 	List<CochesDTO> listaCochesActualizados = new ArrayList<>();
 	static List<CochesDTO> listaCochesEstatica = new ArrayList<>();
 	List<CochesDTO> listaFiltrado = new ArrayList<>();
 	List<CochesDTO> listaReset = new ArrayList<>();
 	ReadCSV reader = new ReadCSV();
+	
 	CochesDAOImp manipular = new CochesDAOImp();
 	
 	private List<CochesDTO> listaCoches;
@@ -81,8 +85,7 @@ public class ControladorCSV implements ActionListener {
 					vista.getMntmGuardar().setEnabled(true);
 				} catch (ExcepcionDTO e1) {
 					dialogoError("Error actualizando datos");
-					e1.printStackTrace();
-				}
+			}
 				break;
 			case "Borrar datos":
 				int resultado = JOptionPane.showConfirmDialog(null, "¿Seguro que quiere borrar esta fila?", "Borrar datos", JOptionPane.OK_CANCEL_OPTION);
@@ -91,12 +94,32 @@ public class ControladorCSV implements ActionListener {
 						borrarFilas();
 						vista.getMntmGuardar().setEnabled(true);
 					} catch (ExcepcionDTO e1) {
-						e1.printStackTrace();
 						dialogoError("Error borrando datos");
 					}
 				}
 				break;
 			case "Buscar":
+				String comand = jButton.getActionCommand();
+				if(comand.equals("BuscarTabla")) {
+					Object[] textFields = {
+							"Matricula", vista.getTextAnadirMatricula() };
+					int result = JOptionPane.showConfirmDialog(null, textFields, "Añadir datos", JOptionPane.OK_CANCEL_OPTION);
+					String busqueda = vista.getTextAnadirMatricula().getText();
+					if(result==JOptionPane.OK_OPTION) {
+						CochesDTO cocheTabla = manipular.listaFromMatricula(busqueda);
+					
+						if(cocheTabla!=null) {
+							JOptionPane.showMessageDialog(null, "Marca: "+cocheTabla.getMarca()+
+								"\nColor: "+cocheTabla.getColor()+
+								"\nModelo: "+cocheTabla.getModelo()+
+								"\nOrigen: "+cocheTabla.getOrigen());
+							actualizarDatosEnTabla();
+						} else
+							JOptionPane.showMessageDialog(null,"No se han encontrado datos");
+					}
+					break;
+				}
+				
 				listaCoches = datosCSVFiltrados(listaCochesEstatica);
 				posicion=0;
 				vista.getBtnBuscar().setEnabled(false);
@@ -119,7 +142,6 @@ public class ControladorCSV implements ActionListener {
 				barra = scrollPane.getVerticalScrollBar();
 				barra.setValue( barra.getValue() - alto );
 				break;
-				
 			default:
 				break;
 			}
@@ -177,6 +199,9 @@ public class ControladorCSV implements ActionListener {
 		vista.getBtnReset().addActionListener(this);
 		vista.getBtnAnterior().addActionListener(this);
 		vista.getBtnSiguiente().addActionListener(this);
+		vista.getBtnBuscarEnTabla().addActionListener(this);
+//		vista.getBtnBuscarEnTabla().getActionCommand();
+		
 		// Menús
 		vista.getMntmCargarDatos().addActionListener(this);
 		vista.getMntmSalir().addActionListener(this);
@@ -259,6 +284,7 @@ public class ControladorCSV implements ActionListener {
 			vista.getBtnBuscar().setEnabled(true);
 			vista.getBtnSiguiente().setEnabled(true);
 			vista.getBtnAnterior().setEnabled(true);
+			vista.getBtnBuscarEnTabla().setEnabled(true);
 			scrollPane = new JScrollPane(vista.getTable(),JScrollPane.VERTICAL_SCROLLBAR_NEVER,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 			actualizarDatosEnTabla();
 		} 
@@ -279,6 +305,10 @@ public class ControladorCSV implements ActionListener {
 				vista.getTextAnadirOrigen().getText());
 		if(resultado==JOptionPane.OK_OPTION) {
 			manipular.insertarCoche(coche);
+			JOptionPane.showMessageDialog(null, "COCHE INSERTADO CORRECTAMENTE"+"\nMarca: "+coche.getMarca()+
+								"\nColor: "+coche.getColor()+
+								"\nModelo: "+coche.getModelo()+
+								"\nOrigen: "+coche.getOrigen());
 			actualizarDatosEnTabla();
 		}
 	}
@@ -297,6 +327,7 @@ public class ControladorCSV implements ActionListener {
 		};
 		dimension = vista.getTable().getPreferredSize();
 		vista.getTable().setModel(model);
+		System.out.println(manipular.getDatos());
 		scrollPane.setPreferredSize(new Dimension(dimension.width, vista.getTable().getRowHeight()*filas));
 		vista.getPanelTablas().add(scrollPane, BorderLayout.CENTER);
 	}
