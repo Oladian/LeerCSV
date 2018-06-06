@@ -62,6 +62,7 @@ public class VistaCSV {
 	private JPanel panelTablas;
 	private JMenuItem mntmGuardar;
 	private JButton btnBuscarEnTabla;
+	private JMenuItem mntmGenerarPdf;
 	
 	public VistaCSV() {
 		initialize();
@@ -70,7 +71,7 @@ public class VistaCSV {
 
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 566);
+		frame.setBounds(100, 100, 800, 566);
 		frame.setTitle("Proyecto de Programación de Izan Ortiz Serrano");
 		frame.setLocationRelativeTo(null);
 		frame.setResizable(false);
@@ -84,6 +85,9 @@ public class VistaCSV {
 		
 		mntmCargarDatos = new JMenuItem("Cargar datos");
 		mnArchivo.add(mntmCargarDatos);
+		
+		mntmGenerarPdf = new JMenuItem("Generar PDF");
+		mnArchivo.add(mntmGenerarPdf);
 		
 		mntmGuardar = new JMenuItem("Guardar");
 		mnArchivo.add(mntmGuardar);
@@ -502,6 +506,14 @@ public class VistaCSV {
 
 	public void setBtnBuscarEnTabla(JButton btnBuscarEnTabla) {
 		this.btnBuscarEnTabla = btnBuscarEnTabla;
+	}
+
+	public JMenuItem getMntmGenerarPdf() {
+		return mntmGenerarPdf;
+	}
+
+	public void setMntmGenerarPdf(JMenuItem mntmGenerarPdf) {
+		this.mntmGenerarPdf = mntmGenerarPdf;
 	}
 	
 }

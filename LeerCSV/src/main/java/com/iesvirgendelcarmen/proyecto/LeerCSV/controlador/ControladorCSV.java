@@ -21,6 +21,7 @@ import com.iesvirgendelcarmen.proyecto.LeerCSV.modelo.CochesDAOImp;
 import com.iesvirgendelcarmen.proyecto.LeerCSV.modelo.CochesDTO;
 import com.iesvirgendelcarmen.proyecto.LeerCSV.modelo.CrearLog;
 import com.iesvirgendelcarmen.proyecto.LeerCSV.modelo.ExcepcionDTO;
+import com.iesvirgendelcarmen.proyecto.LeerCSV.modelo.GenerarPDF;
 import com.iesvirgendelcarmen.proyecto.LeerCSV.modelo.ReadCSV;
 import com.iesvirgendelcarmen.proyecto.LeerCSV.vista.VistaCSV;
 
@@ -36,7 +37,7 @@ public class ControladorCSV implements ActionListener {
 	List<CochesDTO> listaFiltrado = new ArrayList<>();
 	List<CochesDTO> listaReset = new ArrayList<>();
 	ReadCSV reader = new ReadCSV();
-	
+	GenerarPDF generarPdf = new GenerarPDF();
 	CochesDAOImp manipular = new CochesDAOImp();
 	
 	private List<CochesDTO> listaCoches;
@@ -47,7 +48,7 @@ public class ControladorCSV implements ActionListener {
 	private Set<String> marcas = new HashSet<>();
 	private Set<String> origenes = new HashSet<>();
 	
-	private int filas = 15;
+	private int filas = 22;
 	
 	public ControladorCSV(VistaCSV vista) {
 		this.vista = vista;
@@ -169,14 +170,15 @@ public class ControladorCSV implements ActionListener {
 					//vista.messageAbout();
 					break;
 				case "Cargar datos":
-					lanzarEleccionFichero();
-					vista.getMntmCargarDatos().setEnabled(false);
-					if (posicion>=0 && posicion<=1000)
+					if (posicion>=0 && posicion<=1000 && lanzarEleccionFichero())
 						colocarFormularioCoche(posicion);
 					break;
 				case "Guardar":
 					manipular.hacerCommit();
 					vista.getMntmGuardar().setEnabled(false);
+					break;
+				case "Generar PDF":
+					generarPdf.print(vista.getTable());
 					break;
 				default:
 					break;
@@ -200,12 +202,12 @@ public class ControladorCSV implements ActionListener {
 		vista.getBtnAnterior().addActionListener(this);
 		vista.getBtnSiguiente().addActionListener(this);
 		vista.getBtnBuscarEnTabla().addActionListener(this);
-//		vista.getBtnBuscarEnTabla().getActionCommand();
 		
 		// Menús
 		vista.getMntmCargarDatos().addActionListener(this);
 		vista.getMntmSalir().addActionListener(this);
 		vista.getMntmGuardar().addActionListener(this);
+		vista.getMntmGenerarPdf().addActionListener(this);
 	}
 	
 		// Formulario para CSV
@@ -220,74 +222,69 @@ public class ControladorCSV implements ActionListener {
 	}
 	
 		//Metodo que escoge el fichero
-	private void lanzarEleccionFichero() {
+	private boolean lanzarEleccionFichero() {
 		
 		JFileChooser fileChooser = new JFileChooser("./ficherosCSV");
 		int resultado = fileChooser.showOpenDialog(vista.getFrame());
 		if(resultado==JFileChooser.APPROVE_OPTION) {
 			path = fileChooser.getSelectedFile().getPath();
-		}
-		/*
-		 * 
-		 * 
-		 * HAY QUE PONER LA CREACIÓN DE LA BASE DE DATOS SI NO EXISTE
-		 * 
-		 * 
-		 */
-		else if (resultado==JFileChooser.CANCEL_OPTION)
+			if(listaCoches==null) {
+				listaCochesEstatica = reader.getCarListFromCSV(path);
+				listaCoches = listaCochesEstatica;
+				
+				if(manipular.listarCoches().size()<=0 ) {
+					manipular.crearBaseDatos();
+					manipular.insertarListaCoches(listaCochesEstatica);
+					manipular.completarArrays(listaCochesEstatica);
+				}
+				
+				for (CochesDTO coche : listaCoches) {
+					colores.add(coche.getColor());
+					marcas.add(coche.getMarca());
+					origenes.add(coche.getOrigen());
+					listaReset.add(coche);
+				}
+				
+				vista.getComboBoxColor().addItem("--");
+				for (String color : colores) {
+					vista.getComboBoxColor().addItem(color);
+				}
+				
+				vista.getComboBoxMarca().addItem("--");
+				for (String marca : marcas) {
+					vista.getComboBoxMarca().addItem(marca);
+				}
+				
+				vista.getComboBoxOrigen().addItem("--");
+				for (String origen : origenes) {
+					vista.getComboBoxOrigen().addItem(origen);
+				}
+				
+				vista.getComboBoxColor().setEnabled(true);
+				vista.getComboBoxMarca().setEnabled(true);
+				vista.getComboBoxOrigen().setEnabled(true);
+				
+				vista.getButtonMayor().setEnabled(true);
+				vista.getButtonMayorMayor().setEnabled(true);
+				vista.getButtonMenor().setEnabled(true);
+				vista.getButtonMenorMenor().setEnabled(true);
+				vista.getBtnAnadirDatos().setEnabled(true);
+				vista.getBtnBorrarDatos().setEnabled(true);
+				vista.getBtnActualizarDatos().setEnabled(true);
+				vista.getTable().setEnabled(true);
+				vista.getBtnBuscar().setEnabled(true);
+				vista.getBtnSiguiente().setEnabled(true);
+				vista.getBtnAnterior().setEnabled(true);
+				vista.getBtnBuscarEnTabla().setEnabled(true);
+				vista.getMntmCargarDatos().setEnabled(false);
+				scrollPane = new JScrollPane(vista.getTable(),JScrollPane.VERTICAL_SCROLLBAR_NEVER,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+				actualizarDatosEnTabla();
+			} 
+			return true;
+		} else {
 			path = ".";
-		
-		if(listaCoches==null) {
-			listaCochesEstatica = reader.getCarListFromCSV(path);
-			listaCoches = listaCochesEstatica;
-			
-			if(manipular.listarCoches().size()<=0 ) {
-				manipular.crearBaseDatos();
-				manipular.insertarListaCoches(listaCoches);
-				manipular.completarArrays(listaCoches);
-			}
-			
-			for (CochesDTO coche : listaCoches) {
-				colores.add(coche.getColor());
-				marcas.add(coche.getMarca());
-				origenes.add(coche.getOrigen());
-				listaReset.add(coche);
-			}
-			
-			vista.getComboBoxColor().addItem("--");
-			for (String color : colores) {
-				vista.getComboBoxColor().addItem(color);
-			}
-			
-			vista.getComboBoxMarca().addItem("--");
-			for (String marca : marcas) {
-				vista.getComboBoxMarca().addItem(marca);
-			}
-			
-			vista.getComboBoxOrigen().addItem("--");
-			for (String origen : origenes) {
-				vista.getComboBoxOrigen().addItem(origen);
-			}
-			
-			vista.getComboBoxColor().setEnabled(true);
-			vista.getComboBoxMarca().setEnabled(true);
-			vista.getComboBoxOrigen().setEnabled(true);
-			
-			vista.getButtonMayor().setEnabled(true);
-			vista.getButtonMayorMayor().setEnabled(true);
-			vista.getButtonMenor().setEnabled(true);
-			vista.getButtonMenorMenor().setEnabled(true);
-			vista.getBtnAnadirDatos().setEnabled(true);
-			vista.getBtnBorrarDatos().setEnabled(true);
-			vista.getBtnActualizarDatos().setEnabled(true);
-			vista.getTable().setEnabled(true);
-			vista.getBtnBuscar().setEnabled(true);
-			vista.getBtnSiguiente().setEnabled(true);
-			vista.getBtnAnterior().setEnabled(true);
-			vista.getBtnBuscarEnTabla().setEnabled(true);
-			scrollPane = new JScrollPane(vista.getTable(),JScrollPane.VERTICAL_SCROLLBAR_NEVER,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-			actualizarDatosEnTabla();
-		} 
+			return false;
+		}
 	}
 	
 	// Método que lanzará un input para almacenar los datos recogidos por el teclado
@@ -327,11 +324,12 @@ public class ControladorCSV implements ActionListener {
 		};
 		dimension = vista.getTable().getPreferredSize();
 		vista.getTable().setModel(model);
-		System.out.println(manipular.getDatos());
 		scrollPane.setPreferredSize(new Dimension(dimension.width, vista.getTable().getRowHeight()*filas));
 		vista.getPanelTablas().add(scrollPane, BorderLayout.CENTER);
 	}
 
+	// Metodo para actualizar las filas y los datos de la base de datos
+	
 	private void actualizarFilas() throws ExcepcionDTO {
 	    List<CochesDTO> listaCochesSeleccionados = new ArrayList<>();
 	    String matricula;
@@ -356,6 +354,8 @@ public class ControladorCSV implements ActionListener {
 	        }
 	    }
 	}
+	
+	// Metodo para borrar las filas y los datos de la base de datos
 	
 	private void borrarFilas() throws ExcepcionDTO {
 	    List<CochesDTO> listaCochesSeleccionados = new ArrayList<>();

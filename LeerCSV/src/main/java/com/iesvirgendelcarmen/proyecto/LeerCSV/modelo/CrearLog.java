@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 public class CrearLog {
 
-	private static File file = new File("logs/proyecto.log");
+	private static File file = new File("logs/proyecto.txt");
 	
 	// Método que escribe los logs en el fichero proyecto.log
 	public void crearLog(String log, String primaryKey){

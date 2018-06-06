@@ -66,10 +66,8 @@ public class CochesDAOImp implements CochesDAO {
 		
 			return coche;
 		} catch (SQLException e) {
-			System.out.println("Null1");
 			return null;
 		} catch (ExcepcionDTO e) {
-			System.out.println("Null2");
 			return null;
 		}
 	}
@@ -201,6 +199,7 @@ public class CochesDAOImp implements CochesDAO {
 			conexion.setAutoCommit(true);
 			for (CochesDTO cochesDTO : lista) {
 				insertarCoche(cochesDTO);
+				System.out.println(cochesDTO);
 			}
 			return true;
 		} catch (SQLException e1) {
