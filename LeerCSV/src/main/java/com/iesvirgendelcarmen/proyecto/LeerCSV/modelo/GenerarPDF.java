@@ -49,7 +49,8 @@ public class GenerarPDF{
 				else 			
 					processBuilderLinux.start();
 			} catch (IOException e) {
-				e.printStackTrace();
+				new CrearLog().crearLog("Error al ejecutar el comando de lectura del pdf", null);
+				
 			}
 		}
 	}
