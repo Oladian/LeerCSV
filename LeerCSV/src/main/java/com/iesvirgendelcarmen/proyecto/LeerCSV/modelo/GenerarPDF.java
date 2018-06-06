@@ -1,60 +1,56 @@
 package com.iesvirgendelcarmen.proyecto.LeerCSV.modelo;
 
-import java.awt.Graphics2D;
-import java.awt.Shape;
+import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
-import javax.swing.JFrame;
 import javax.swing.JTable;
-
 import com.itextpdf.text.Document;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfTemplate;
 import com.itextpdf.text.pdf.PdfWriter;
 
-public class GenerarPDF extends JFrame {
-	private static final long serialVersionUID = 4504962558942944277L;
-	
-	public void print(JTable table) {
-		Document document = new Document(PageSize.A4.rotate());
+public class GenerarPDF{
+	public void print(JTable tabla) {
 		try {
-			PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("jTable.pdf"));
-			int numeroDePaginas = table.getRowCount()/22;
+			Document doc = new Document();
+            PdfWriter.getInstance(doc, new FileOutputStream("tabla.pdf"));
+            doc.open();
+            PdfPTable pdfTabla = new PdfPTable(tabla.getColumnCount());
 
-			
-			document.open();
-			document.add(new Paragraph("Tabla de coches"));
-			writer.newPage();
-			PdfContentByte cb = writer.getDirectContent();
-			
-			PdfTemplate template = cb.createTemplate(800, 500);
-			
-			cb.saveState();
-			@SuppressWarnings("deprecation")
-			Graphics2D g2 = cb.createGraphicsShapes(800, 500);
-			
-			Shape oldClip = g2.getClip();
-			g2.clipRect(0, 0, 800, 500);
-			table.print(g2);
-			g2.setClip(oldClip);
-			
-			g2.dispose();
-			
-			cb.restoreState();
-			document.newPage();
-			document.close();
-			
-			
-			for(int i=0; i < numeroDePaginas; i++) {
-				System.out.println("hol");
-				document.newPage();
-			}
-			
+            // For que añade las cabeceras a la tabla del pdf
+            for (int i = 0; i < tabla.getColumnCount(); i++) {
+                pdfTabla.addCell(tabla.getColumnName(i));
+            }
+            
+            // Extrae los datos desde la JTable y los inserta en la tabla del pdf
+            for (int rows = 0; rows < tabla.getRowCount(); rows++) {
+                for (int cols = 0; cols < tabla.getColumnCount(); cols++) {
+                    pdfTabla.addCell(tabla.getModel().getValueAt(rows, cols).toString());
+                }
+            }
+            doc.add(pdfTabla);
+            doc.close();
+            getPdf();
 		} catch (Exception e) {
-			System.err.println(e.getMessage());
+			new CrearLog().crearLog("Fallo al generar el PDF. Posible causa: Fichero en uso por el Sistema.",null);
+		}
+	}
+	
+	// Método que ejecutará el explorador por defecto para la lectura del pdf recién creado
+	
+	private void getPdf() {
+		File pdf = new File("tabla.pdf");
+		if(pdf.exists()) {
+			ProcessBuilder processBuilderWindows = new ProcessBuilder("cmd.exe", "/C", "explorer tabla.pdf");
+			ProcessBuilder processBuilderLinux = new ProcessBuilder("/bin/bash", "-c", "sensible-browser tabla.pdf");
+			try {
+				if(System.getProperty("os.name").contains("Windows"))
+					processBuilderWindows.start();
+				else 			
+					processBuilderLinux.start();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }

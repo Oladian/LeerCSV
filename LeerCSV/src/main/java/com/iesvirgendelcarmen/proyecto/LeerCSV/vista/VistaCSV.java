@@ -71,7 +71,7 @@ public class VistaCSV {
 
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 800, 566);
+		frame.setBounds(100, 100, 450, 566);
 		frame.setTitle("Proyecto de Programación de Izan Ortiz Serrano");
 		frame.setLocationRelativeTo(null);
 		frame.setResizable(false);
@@ -87,6 +87,7 @@ public class VistaCSV {
 		mnArchivo.add(mntmCargarDatos);
 		
 		mntmGenerarPdf = new JMenuItem("Generar PDF");
+		mntmGenerarPdf.setEnabled(false);
 		mnArchivo.add(mntmGenerarPdf);
 		
 		mntmGuardar = new JMenuItem("Guardar");

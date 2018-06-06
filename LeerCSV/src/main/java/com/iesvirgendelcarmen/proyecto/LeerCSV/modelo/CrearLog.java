@@ -9,10 +9,13 @@ import java.time.LocalDateTime;
 
 public class CrearLog {
 
-	private static File file = new File("logs/proyecto.txt");
-	
+	private static File file = new File("logs/logProyecto.txt");
+
 	// Método que escribe los logs en el fichero proyecto.log
 	public void crearLog(String log, String primaryKey){
+//		if(!file.exists()) {
+//			file = new File("logProyecto.txt");
+//		} 
 		try(PrintWriter output = new PrintWriter(new BufferedOutputStream(new FileOutputStream(file,true)));) {
 			output.println(LocalDateTime.now()+" | "+ primaryKey +" | "+log+"\n");
 		} catch (FileNotFoundException e) {

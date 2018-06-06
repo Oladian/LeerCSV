@@ -77,25 +77,28 @@ public class ControladorCSV implements ActionListener {
 					lanzarInputRecogerDatos();
 					vista.getMntmGuardar().setEnabled(true);
 				} catch (ExcepcionDTO e1) {
-					dialogoError("Error añadiendo datos");
+					dialogo("Error añadiendo datos");
 				}
 				break;
 			case "Actualizar datos":
 				try {
+					dialogo("Actualizados "+vista.getTable().getSelectedRowCount()+" elementos.");
 					actualizarFilas();
 					vista.getMntmGuardar().setEnabled(true);
 				} catch (ExcepcionDTO e1) {
-					dialogoError("Error actualizando datos");
+					dialogo("Error actualizando datos");
 			}
 				break;
 			case "Borrar datos":
 				int resultado = JOptionPane.showConfirmDialog(null, "¿Seguro que quiere borrar esta fila?", "Borrar datos", JOptionPane.OK_CANCEL_OPTION);
 				if(resultado==JOptionPane.OK_OPTION) {
 					try {
+						dialogo("Borrados "+vista.getTable().getSelectedRowCount()+" elementos.");
 						borrarFilas();
 						vista.getMntmGuardar().setEnabled(true);
+						vista.getMntmGenerarPdf().setEnabled(true);
 					} catch (ExcepcionDTO e1) {
-						dialogoError("Error borrando datos");
+						dialogo("Error borrando datos");
 					}
 				}
 				break;
@@ -152,7 +155,7 @@ public class ControladorCSV implements ActionListener {
 					posicion+=listaCoches.size();
 				colocarFormularioCoche(posicion);
 			} else {
-				dialogoError("No existen coches con esos parámetros.");
+				dialogo("No existen coches con esos parámetros.");
 				vista.getBtnBuscar().setEnabled(true);
 				vista.getBtnReset().setEnabled(false);
 			}
@@ -176,9 +179,11 @@ public class ControladorCSV implements ActionListener {
 				case "Guardar":
 					manipular.hacerCommit();
 					vista.getMntmGuardar().setEnabled(false);
+					vista.getMntmGenerarPdf().setEnabled(true);
 					break;
 				case "Generar PDF":
 					generarPdf.print(vista.getTable());
+					vista.getMntmGenerarPdf().setEnabled(false);
 					break;
 				default:
 					break;
@@ -302,10 +307,15 @@ public class ControladorCSV implements ActionListener {
 				vista.getTextAnadirOrigen().getText());
 		if(resultado==JOptionPane.OK_OPTION) {
 			manipular.insertarCoche(coche);
-			JOptionPane.showMessageDialog(null, "COCHE INSERTADO CORRECTAMENTE"+"\nMarca: "+coche.getMarca()+
+			dialogo("COCHE INSERTADO CORRECTAMENTE"+"\nMarca: "+coche.getMarca()+
 								"\nColor: "+coche.getColor()+
 								"\nModelo: "+coche.getModelo()+
 								"\nOrigen: "+coche.getOrigen());
+			
+//			JOptionPane.showMessageDialog(null, "COCHE INSERTADO CORRECTAMENTE"+"\nMarca: "+coche.getMarca()+
+//								"\nColor: "+coche.getColor()+
+//								"\nModelo: "+coche.getModelo()+
+//								"\nOrigen: "+coche.getOrigen());
 			actualizarDatosEnTabla();
 		}
 	}
@@ -341,7 +351,7 @@ public class ControladorCSV implements ActionListener {
 	        if (vista.getTable().getSelectedRowCount() > 0) {
 	            int selectedRow[] = vista.getTable().getSelectedRows();
 	            for (int i : selectedRow) {
-	            	matricula =vista.getTable().getValueAt(i, 0).toString();
+	            	matricula = vista.getTable().getValueAt(i, 0).toString();
 	        		marca = vista.getTable().getValueAt(i, 1).toString();
 	        		color = vista.getTable().getValueAt(i, 2).toString();
 	        		modelo = vista.getTable().getValueAt(i, 3).toString();
@@ -409,7 +419,7 @@ public class ControladorCSV implements ActionListener {
 		return listaFiltrado;
 	}
 
-	private void dialogoError(String string) {
-		JOptionPane.showMessageDialog(null, string, "ERROR", 1);
+	private void dialogo(String string) {
+		JOptionPane.showMessageDialog(null, string, "Aviso", 1);
 	}
 }
