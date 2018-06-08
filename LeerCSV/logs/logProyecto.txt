@@ -1,6 +1,2 @@
-2018-06-06T17:57:44.168 | null | Fallo al generar el PDF. Posible causa: Fichero en uso por el Sistema.
-
-2018-06-06T17:59:24.478 | null | Fallo al generar el PDF. Posible causa: Fichero en uso por el Sistema.
-
-2018-06-06T18:11:42.424 | null | Fallo al generar el PDF. Posible causa: Fichero en uso por el Sistema.
+2018-06-08T10:29:05.541 | null | Fallo al generar el PDF. Posible causa: Fichero en uso por el Sistema.
 

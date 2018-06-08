@@ -13,9 +13,7 @@ public class CrearLog {
 
 	// Método que escribe los logs en el fichero proyecto.log
 	public void crearLog(String log, String primaryKey){
-//		if(!file.exists()) {
-//			file = new File("logProyecto.txt");
-//		} 
+
 		try(PrintWriter output = new PrintWriter(new BufferedOutputStream(new FileOutputStream(file,true)));) {
 			output.println(LocalDateTime.now()+" | "+ primaryKey +" | "+log+"\n");
 		} catch (FileNotFoundException e) {
