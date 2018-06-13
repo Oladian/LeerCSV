@@ -303,7 +303,6 @@ public class ControladorCSV implements ActionListener {
 				vista.getMntmCargarDatos().setEnabled(false);
 				scrollPane = new JScrollPane(vista.getTable(),JScrollPane.VERTICAL_SCROLLBAR_NEVER,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 			} 
-			actualizarDatosEnTabla();
 			return true;
 		} else {
 			path = ".";
