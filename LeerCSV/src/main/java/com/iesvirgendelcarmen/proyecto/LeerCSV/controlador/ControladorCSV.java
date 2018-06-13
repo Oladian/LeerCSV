@@ -10,7 +10,9 @@ import java.util.List;
 import java.util.Set;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
@@ -23,7 +25,6 @@ import com.iesvirgendelcarmen.proyecto.LeerCSV.modelo.CochesDTO;
 import com.iesvirgendelcarmen.proyecto.LeerCSV.modelo.CrearLog;
 import com.iesvirgendelcarmen.proyecto.LeerCSV.modelo.ExcepcionDTO;
 import com.iesvirgendelcarmen.proyecto.LeerCSV.modelo.GenerarPDF;
-import com.iesvirgendelcarmen.proyecto.LeerCSV.modelo.Hilo;
 import com.iesvirgendelcarmen.proyecto.LeerCSV.modelo.ReadCSV;
 import com.iesvirgendelcarmen.proyecto.LeerCSV.vista.VistaCSV;
 
@@ -83,8 +84,6 @@ public class ControladorCSV implements ActionListener {
 				}
 				break;
 			case "Actualizar datos":
-				JProgressBar barraProgreso = new JProgressBar(0, 100);
-				
 				try {
 					dialogo("Actualizados "+vista.getTable().getSelectedRowCount()+" elementos.");
 					actualizarFilas();
@@ -173,8 +172,8 @@ public class ControladorCSV implements ActionListener {
 				switch (menuString) {
 				case "Salir":
 					System.exit(0);
-				case "About":
-					//vista.messageAbout();
+				case "Sobre mí":
+					JOptionPane.showMessageDialog(null, "Izan Ortiz Serrano - 1º DAM - Programación", "Sobre mí", 1);
 					break;
 				case "Cargar datos":
 					if (posicion>=0 && posicion<=1000 && lanzarEleccionFichero())
@@ -217,6 +216,7 @@ public class ControladorCSV implements ActionListener {
 		vista.getMntmSalir().addActionListener(this);
 		vista.getMntmGuardar().addActionListener(this);
 		vista.getMntmGenerarPdf().addActionListener(this);
+		vista.getMntmSobreMi().addActionListener(this);
 	}
 	
 		// Formulario para CSV
@@ -233,6 +233,7 @@ public class ControladorCSV implements ActionListener {
 		//Metodo que escoge el fichero
 	private boolean lanzarEleccionFichero() {
 		
+//		Thread.
 		JFileChooser fileChooser = new JFileChooser("./ficherosCSV");
 		int resultado = fileChooser.showOpenDialog(vista.getFrame());
 		if(resultado==JFileChooser.APPROVE_OPTION) {
@@ -241,14 +242,25 @@ public class ControladorCSV implements ActionListener {
 				listaCochesEstatica = reader.getCarListFromCSV(path);
 				listaCoches = listaCochesEstatica;
 				
-				if(manipular.listarCoches().size()<=0 ) {
-					manipular.crearBaseDatos();
+				Thread hilo1 = new Thread(new Runnable() {
+					@Override
+					public void run() {
+						progressBar();
+					}
+				});
+				Thread hilo2 = new Thread(new Runnable() {
+					@Override
+					public void run() {
+						manipular.insertarListaCoches(listaCochesEstatica);
+						manipular.completarArrays(listaCochesEstatica);
+					}
+				});
 					
-					new Thread(new Hilo()).start();
-					manipular.insertarListaCoches(listaCochesEstatica);
-					manipular.completarArrays(listaCochesEstatica);
+				if(manipular.listarCoches().size()<=0) {
+					manipular.crearBaseDatos();
+					hilo1.start();
+					hilo2.start();
 				}
-				
 				for (CochesDTO coche : listaCoches) {
 					colores.add(coche.getColor());
 					marcas.add(coche.getMarca());
@@ -289,8 +301,8 @@ public class ControladorCSV implements ActionListener {
 				vista.getBtnBuscarEnTabla().setEnabled(true);
 				vista.getMntmCargarDatos().setEnabled(false);
 				scrollPane = new JScrollPane(vista.getTable(),JScrollPane.VERTICAL_SCROLLBAR_NEVER,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-				actualizarDatosEnTabla();
 			} 
+			actualizarDatosEnTabla();
 			return true;
 		} else {
 			path = ".";
@@ -420,6 +432,37 @@ public class ControladorCSV implements ActionListener {
 		return listaFiltrado;
 	}
 
+	private void progressBar() {
+		final JDialog dialogo = new JDialog(vista.getFrame(), "Diálogo de progreso", true);
+		JProgressBar barra = new JProgressBar(0, listaCochesEstatica.size());
+		dialogo.add(BorderLayout.CENTER, barra);
+		dialogo.add(BorderLayout.NORTH, new JLabel("Progreso de carga..."));
+		dialogo.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+		dialogo.setSize(500, 100);
+		dialogo.setLocationRelativeTo(vista.getFrame());
+		barra.setStringPainted(true);
+		
+		Thread hilo = new Thread(new Runnable() {
+			public void run() {
+				dialogo.setVisible(true);
+			}
+		});
+		hilo.start();
+		for (int i = 0; i <= listaCochesEstatica.size(); i++) {
+			barra.setValue(i);
+			if(barra.getValue() == listaCochesEstatica.size()){
+				JOptionPane.showMessageDialog(null, "Datos cargados");
+				dialogo.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+				dialogo.setVisible(false);
+			}
+			try {
+				Thread.sleep(38);
+			} catch (InterruptedException e) {
+			}
+		}
+		dialogo.setVisible(true);
+	}
+	
 	private void dialogo(String string) {
 		JOptionPane.showMessageDialog(null, string, "Aviso", 1);
 	}

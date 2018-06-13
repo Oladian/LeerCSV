@@ -199,7 +199,7 @@ public class CochesDAOImp implements CochesDAO {
 			conexion.setAutoCommit(true);
 			for (CochesDTO cochesDTO : lista) {
 				insertarCoche(cochesDTO);
-				System.out.println(cochesDTO);
+//				System.out.println(cochesDTO);
 			}
 			return true;
 		} catch (SQLException e1) {

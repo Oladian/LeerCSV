@@ -66,6 +66,8 @@ public class VistaCSV {
 	private JButton btnBuscarEnTabla;
 	private JMenuItem mntmGenerarPdf;
 	private JProgressBar barraProgreso;
+	private JMenu mnSobreMi;
+	private JMenuItem mntmSobreMi;
 	
 	public VistaCSV() {
 		initialize();
@@ -98,6 +100,12 @@ public class VistaCSV {
 		
 		mntmSalir = new JMenuItem("Salir");
 		mnArchivo.add(mntmSalir);
+		
+		mnSobreMi = new JMenu("Sobre");
+		menuBar.add(mnSobreMi);
+		
+		mntmSobreMi = new JMenuItem("Sobre mí");
+		mnSobreMi.add(mntmSobreMi);
 		
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		frame.getContentPane().add(tabbedPane, BorderLayout.CENTER);
@@ -226,7 +234,6 @@ public class VistaCSV {
 		
 		scrollPaneTablas = new JScrollPane(table,JScrollPane.VERTICAL_SCROLLBAR_NEVER,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPaneTablas.setEnabled(false);
-//		panelTablas.add(scrollPaneTablas,BorderLayout.CENTER);
 		
 		table = new JTable();
 		
@@ -527,5 +534,12 @@ public class VistaCSV {
 	public void setBarraProgreso(JProgressBar barraProgreso) {
 		this.barraProgreso = barraProgreso;
 	}
-	
+
+	public JMenuItem getMntmSobreMi() {
+		return mntmSobreMi;
+	}
+
+	public void setMntmSobreMi(JMenuItem mntmSobreMi) {
+		this.mntmSobreMi = mntmSobreMi;
+	}
 }
