@@ -54,7 +54,6 @@ public class CochesDAOImp implements CochesDAO {
 	
 	@Override
 	public CochesDTO listaFromMatricula(String matricula){
-//		List<CochesDTO> lista = new ArrayList<>();
 		String sql = "SELECT * FROM coches WHERE matricula = ?;";
 		
 		try(PreparedStatement statement = conexion.prepareStatement(sql);
@@ -199,7 +198,7 @@ public class CochesDAOImp implements CochesDAO {
 			conexion.setAutoCommit(true);
 			for (CochesDTO cochesDTO : lista) {
 				insertarCoche(cochesDTO);
-//				System.out.println(cochesDTO);
+				System.out.println(cochesDTO);
 			}
 			return true;
 		} catch (SQLException e1) {

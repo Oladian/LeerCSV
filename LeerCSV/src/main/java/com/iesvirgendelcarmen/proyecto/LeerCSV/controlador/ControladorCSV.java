@@ -258,6 +258,7 @@ public class ControladorCSV implements ActionListener {
 					
 				if(manipular.listarCoches().size()<=0) {
 					manipular.crearBaseDatos();
+					
 					hilo1.start();
 					hilo2.start();
 				}
