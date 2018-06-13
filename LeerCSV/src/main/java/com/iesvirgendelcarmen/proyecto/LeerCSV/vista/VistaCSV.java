@@ -10,6 +10,8 @@ import javax.swing.JTable;
 import java.awt.BorderLayout;
 import javax.swing.JSplitPane;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+
 import java.awt.GridLayout;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -63,6 +65,7 @@ public class VistaCSV {
 	private JMenuItem mntmGuardar;
 	private JButton btnBuscarEnTabla;
 	private JMenuItem mntmGenerarPdf;
+	private JProgressBar barraProgreso;
 	
 	public VistaCSV() {
 		initialize();
@@ -515,6 +518,14 @@ public class VistaCSV {
 
 	public void setMntmGenerarPdf(JMenuItem mntmGenerarPdf) {
 		this.mntmGenerarPdf = mntmGenerarPdf;
+	}
+
+	public JProgressBar getBarraProgreso() {
+		return barraProgreso;
+	}
+
+	public void setBarraProgreso(JProgressBar barraProgreso) {
+		this.barraProgreso = barraProgreso;
 	}
 	
 }

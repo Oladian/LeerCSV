@@ -13,6 +13,7 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.table.DefaultTableModel;
@@ -22,6 +23,7 @@ import com.iesvirgendelcarmen.proyecto.LeerCSV.modelo.CochesDTO;
 import com.iesvirgendelcarmen.proyecto.LeerCSV.modelo.CrearLog;
 import com.iesvirgendelcarmen.proyecto.LeerCSV.modelo.ExcepcionDTO;
 import com.iesvirgendelcarmen.proyecto.LeerCSV.modelo.GenerarPDF;
+import com.iesvirgendelcarmen.proyecto.LeerCSV.modelo.Hilo;
 import com.iesvirgendelcarmen.proyecto.LeerCSV.modelo.ReadCSV;
 import com.iesvirgendelcarmen.proyecto.LeerCSV.vista.VistaCSV;
 
@@ -81,6 +83,8 @@ public class ControladorCSV implements ActionListener {
 				}
 				break;
 			case "Actualizar datos":
+				JProgressBar barraProgreso = new JProgressBar(0, 100);
+				
 				try {
 					dialogo("Actualizados "+vista.getTable().getSelectedRowCount()+" elementos.");
 					actualizarFilas();
@@ -239,6 +243,8 @@ public class ControladorCSV implements ActionListener {
 				
 				if(manipular.listarCoches().size()<=0 ) {
 					manipular.crearBaseDatos();
+					
+					new Thread(new Hilo()).start();
 					manipular.insertarListaCoches(listaCochesEstatica);
 					manipular.completarArrays(listaCochesEstatica);
 				}
@@ -311,11 +317,6 @@ public class ControladorCSV implements ActionListener {
 								"\nColor: "+coche.getColor()+
 								"\nModelo: "+coche.getModelo()+
 								"\nOrigen: "+coche.getOrigen());
-			
-//			JOptionPane.showMessageDialog(null, "COCHE INSERTADO CORRECTAMENTE"+"\nMarca: "+coche.getMarca()+
-//								"\nColor: "+coche.getColor()+
-//								"\nModelo: "+coche.getModelo()+
-//								"\nOrigen: "+coche.getOrigen());
 			actualizarDatosEnTabla();
 		}
 	}
