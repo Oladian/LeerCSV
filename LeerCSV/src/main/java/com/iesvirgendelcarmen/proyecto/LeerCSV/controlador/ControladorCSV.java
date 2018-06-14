@@ -253,6 +253,7 @@ public class ControladorCSV implements ActionListener {
 					public void run() {
 						manipular.insertarListaCoches(listaCochesEstatica);
 						manipular.completarArrays(listaCochesEstatica);
+						actualizarDatosEnTabla();
 					}
 				});
 					
