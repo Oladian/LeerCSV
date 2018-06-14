@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -254,6 +255,7 @@ public class ControladorCSV implements ActionListener {
 						manipular.insertarListaCoches(listaCochesEstatica);
 						manipular.completarArrays(listaCochesEstatica);
 						actualizarDatosEnTabla();
+						System.out.println(LocalDateTime.now());
 					}
 				});
 					
@@ -303,6 +305,7 @@ public class ControladorCSV implements ActionListener {
 				vista.getBtnBuscarEnTabla().setEnabled(true);
 				vista.getMntmCargarDatos().setEnabled(false);
 				scrollPane = new JScrollPane(vista.getTable(),JScrollPane.VERTICAL_SCROLLBAR_NEVER,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+				actualizarDatosEnTabla();
 			} 
 			return true;
 		} else {
@@ -434,7 +437,7 @@ public class ControladorCSV implements ActionListener {
 	}
 
 	private void progressBar() {
-		final JDialog dialogo = new JDialog(vista.getFrame(), "Diálogo de progreso", true);
+		final JDialog dialogo = new JDialog(vista.getFrame(), "Carga de datos en la BD", true);
 		JProgressBar barra = new JProgressBar(0, listaCochesEstatica.size());
 		dialogo.add(BorderLayout.CENTER, barra);
 		dialogo.add(BorderLayout.NORTH, new JLabel("Progreso de carga..."));
@@ -457,11 +460,11 @@ public class ControladorCSV implements ActionListener {
 				dialogo.setVisible(false);
 			}
 			try {
-				Thread.sleep(38);
+				Thread.sleep(120);
 			} catch (InterruptedException e) {
 			}
 		}
-		dialogo.setVisible(true);
+//		dialogo.setVisible(true);
 	}
 	
 	private void dialogo(String string) {
