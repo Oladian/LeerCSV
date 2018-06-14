@@ -255,7 +255,6 @@ public class ControladorCSV implements ActionListener {
 						manipular.insertarListaCoches(listaCochesEstatica);
 						manipular.completarArrays(listaCochesEstatica);
 						actualizarDatosEnTabla();
-						System.out.println(LocalDateTime.now());
 					}
 				});
 					
@@ -460,11 +459,10 @@ public class ControladorCSV implements ActionListener {
 				dialogo.setVisible(false);
 			}
 			try {
-				Thread.sleep(120);
+				Thread.sleep(125);
 			} catch (InterruptedException e) {
 			}
 		}
-//		dialogo.setVisible(true);
 	}
 	
 	private void dialogo(String string) {

@@ -195,10 +195,12 @@ public class CochesDAOImp implements CochesDAO {
 	@Override
 	public boolean insertarListaCoches(List<CochesDTO> lista) {
 		try {
+//			int contador=1;
 			conexion.setAutoCommit(true);
 			for (CochesDTO cochesDTO : lista) {
 				insertarCoche(cochesDTO);
-				System.out.println(cochesDTO);
+//				System.out.println(contador+": "+cochesDTO);
+//				contador++;
 			}
 			return true;
 		} catch (SQLException e1) {
