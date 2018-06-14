@@ -233,7 +233,6 @@ public class ControladorCSV implements ActionListener {
 		//Metodo que escoge el fichero
 	private boolean lanzarEleccionFichero() {
 		
-//		Thread.
 		JFileChooser fileChooser = new JFileChooser("./ficherosCSV");
 		int resultado = fileChooser.showOpenDialog(vista.getFrame());
 		if(resultado==JFileChooser.APPROVE_OPTION) {
@@ -254,6 +253,7 @@ public class ControladorCSV implements ActionListener {
 						manipular.insertarListaCoches(listaCochesEstatica);
 						manipular.completarArrays(listaCochesEstatica);
 						actualizarDatosEnTabla();
+						System.out.println(manipular.listarCoches().size());
 					}
 				});
 					
