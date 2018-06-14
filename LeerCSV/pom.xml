@@ -38,6 +38,7 @@
 		<type>pom</type>
 	</dependency>
 	<!-- https://mvnrepository.com/artifact/com.itextpdf/itextpdf -->
+	<!-- https://stackoverflow.com/questions/35217128/is-it-possible-to-build-a-java-project-only-once-using-eclipse-and-share/35359756#35359756 --> 
 	<dependency>
 		<groupId>com.itextpdf</groupId>
 		<artifactId>itextpdf</artifactId>
